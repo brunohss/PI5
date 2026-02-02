@@ -350,44 +350,44 @@
             <div class="diagram">
                 <pre>
 ┌─────────────────────────────────────────────────────────────────┐
-│                          ESP32                                   │
-│                                                                  │
+│                          ESP32                                  │
+│                                                                 │
 │  3V3 ────────┬──────────────────────────────┐                   │
-│              │                               │                   │
-│  GPIO 4 ─────┼─────── DHT22 (DATA)           │                   │
-│              │                               │                   │
+│              │                              │                   │
+│  GPIO 4 ─────┼─────── DHT22 (DATA)          │                   │
+│              │                              │                   │
 │  GND ────────┴──────────────────────────────┴─── DHT22 (GND)    │
-│                                                                  │
+│                                                                 │
 │  GPIO 5 ─────────── RELÉ 1 (IN) ──┐                             │
-│                                    │                             │
+│                                   │                             │
 │  GPIO 18 ────────── RELÉ 2 (IN) ──┤                             │
-│                                    │                             │
+│                                   │                             │
 │  VIN/5V ────────── RELÉ (VCC) ────┤                             │
-│                                    │                             │
-│  GND ──────────── RELÉ (GND) ──────┘                             │
-│                                                                  │
-│  GPIO 2 ────────── LED WiFi ─────── 220Ω ─── GND               │
+│                                   │                             │
+│  GND ──────────── RELÉ (GND) ─────┘                             │
+│                                                                 │
+│  GPIO 2 ────────── LED WiFi ─────── 220Ω ──── GND               │
 │  GPIO 15 ───────── LED Resistência ── 220Ω ─── GND              │
 │  GPIO 19 ───────── LED Ventoinha ──── 220Ω ─── GND              │
-│                                                                  │
+│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────────────────────────┐
-│                     MÓDULO DE 2 RELÉS                             │
-│                                                                   │
-│  VCC ─── 5V do ESP32                                              │
-│  GND ─── GND do ESP32                                             │
-│  IN1 ─── GPIO 5 (Resistência)                                     │
-│  IN2 ─── GPIO 18 (Ventoinha)                                      │
-│                                                                   │
-│  RELÉ 1 (NO/COM):                                                 │
-│    COM ─── Fase (220V)                                            │
-│    NO  ─── RESISTÊNCIA DE AQUECIMENTO                             │
-│                                                                   │
-│  RELÉ 2 (NO/COM):                                                 │
-│    COM ─── Fase (220V)                                            │
-│    NO  ─── VENTOINHA 220V                                         │
-│                                                                   │
+│                     MÓDULO DE 2 RELÉS                            │
+│                                                                  │
+│  VCC ─── 5V do ESP32                                             │
+│  GND ─── GND do ESP32                                            │
+│  IN1 ─── GPIO 5 (Resistência)                                    │
+│  IN2 ─── GPIO 18 (Ventoinha)                                     │
+│                                                                  │
+│  RELÉ 1 (NO/COM):                                                │
+│    COM ─── Fase (220V)                                           │
+│    NO  ─── RESISTÊNCIA DE AQUECIMENTO                            │
+│                                                                  │
+│  RELÉ 2 (NO/COM):                                                │
+│    COM ─── Fase (220V)                                           │
+│    NO  ─── VENTOINHA 220V                                        │
+│                                                                  │
 └──────────────────────────────────────────────────────────────────┘
                 </pre>
             </div>
@@ -607,15 +607,15 @@
             <div class="diagram">
                 <pre>
 Vista Superior da Caixa:
-┌────────────────────────────────────┐
-│  [DHT22]                      [LED]│
-│                                    │
-│    ╔════════╗  ╔════════╗          │
-│    ║ ROLO 1 ║  ║ ROLO 2 ║          │
-│    ╚════════╝  ╚════════╝          │
-│                                    │
-│  [RESISTÊNCIA]        [VENTOINHA] │
-└────────────────────────────────────┘
+┌───────────────────────────────────────┐
+│  [DHT22]                      [LED]   │
+│                                       │
+│    ╔════════╗  ╔════════╗             │
+│    ║ ROLO 1 ║  ║ ROLO 2 ║             │
+│    ╚════════╝  ╚════════╝             │
+│                                       │
+│  [RESISTÊNCIA]        [VENTOINHA]     │
+└───────────────────────────────────────┘
 
 Posicionamento:
 - DHT22: Centro, altura média
