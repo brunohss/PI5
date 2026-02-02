@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras - Estufa para Filamentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #0066ff;
+            --accent: #ff3366;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --dark: #0a0e27;
+            --darker: #050817;
+            --light: #e0f7ff;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            padding: 2rem;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Price Summary */
+        .price-summary {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 102, 255, 0.05));
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .price-summary h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .price-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .price-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .price-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+        
+        .price-card.recommended {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .price-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: var(--success);
+            color: var(--darker);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .price-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--success);
+            margin: 1rem 0;
+        }
+        
+        .price-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Product Cards */
+        .category {
+            margin-bottom: 4rem;
+        }
+        
+        .category-header {
+            background: rgba(0, 217, 255, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+        
+        .category-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .product-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(0, 102, 255, 0.03));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .product-card:hover::before {
+            left: 100%;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+        
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-spec {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+        
+        .product-stores {
+            margin-top: 1rem;
+        }
+        
+        .store-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .store-item:hover {
+            background: rgba(0, 217, 255, 0.1);
+        }
+        
+        .store-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .store-price {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .store-shipping {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+        
+        /* Comparison Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        tr:hover {
+            background: rgba(0, 217, 255, 0.05);
+        }
+        
+        /* Checklist */
+        .shopping-checklist {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .shopping-checklist h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .checklist {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .checklist li {
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .checklist li:hover {
+            background: rgba(0, 217, 255, 0.1);
+        }
+        
+        .checklist li::before {
+            content: '☐';
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .checklist li.checked::before {
+            content: '☑';
+            color: var(--success);
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--darker);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.5);
+        }
+        
+        /* Tips */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .tip-card {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid var(--success);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .tip-card h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .product-grid, .price-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛒 Lista de Compras</h1>
+        <div class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span>Lista de Compras</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Price Summary -->
+        <section class="price-summary">
+            <h2>💰 Opções de Custo</h2>
+            <p style="opacity: 0.8; margin-bottom: 1rem;">Escolha a estratégia que melhor se adequa ao seu prazo e orçamento</p>
+            
+            <div class="price-options">
+                <div class="price-card">
+                    <div class="price-name">🚀 FAST</div>
+                    <div class="price-value">R$ 350-450</div>
+                    <div class="price-desc">
+                        <strong>Nacional - 5-10 dias</strong><br>
+                        Entrega rápida, suporte em português
+                    </div>
+                </div>
+                
+                <div class="price-card recommended">
+                    <span class="price-badge">⭐ RECOMENDADA</span>
+                    <div class="price-name">⚖️ HÍBRIDA</div>
+                    <div class="price-value">R$ 280-380</div>
+                    <div class="price-desc">
+                        <strong>Mix - 15-30 dias</strong><br>
+                        Equilíbrio perfeito preço/prazo
+                    </div>
+                </div>
+                
+                <div class="price-card">
+                    <div class="price-name">💰 ECONÔMICA</div>
+                    <div class="price-value">R$ 200-300</div>
+                    <div class="price-desc">
+                        <strong>Internacional - 30-60 dias</strong><br>
+                        Muito mais barato, espera longa
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Componentes Eletrônicos -->
+        <section class="category">
+            <div class="category-header">
+                <h2>🔌 Componentes Eletrônicos</h2>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon">⚡</div>
+                    <div class="product-name">ESP32 DevKit</div>
+                    <div class="product-spec">ESP32 WROOM-32, WiFi/Bluetooth, 38 pinos</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 25-35</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Usinainfo</div>
+                                <div class="store-shipping">5-7 dias</div>
+                            </div>
+                            <div class="store-price">R$ 49,90</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Amazon BR</div>
+                                <div class="store-shipping">1-2 dias</div>
+                            </div>
+                            <div class="store-price">R$ 59,90</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🌡️</div>
+                    <div class="product-name">Sensor DHT22</div>
+                    <div class="product-spec">AM2302, -40~80°C, ±0.5°C/±2%</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 10-15</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Usinainfo</div>
+                                <div class="store-shipping">5-7 dias</div>
+                            </div>
+                            <div class="store-price">R$ 24,90</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🔄</div>
+                    <div class="product-name">Módulo Relé 2 Canais</div>
+                    <div class="product-spec">5V trigger, 10A 250VAC, isolação óptica</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 8-12</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Usinainfo</div>
+                                <div class="store-shipping">5-7 dias</div>
+                            </div>
+                            <div class="store-price">R$ 19,90</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">💡</div>
+                    <div class="product-name">LEDs + Resistores</div>
+                    <div class="product-spec">3x LEDs 5mm (RGB) + 3x Resistores 220Ω</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress (Kit)</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 10-15</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Usinainfo</div>
+                                <div class="store-shipping">5-7 dias</div>
+                            </div>
+                            <div class="store-price">R$ 5-8</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sistema de Aquecimento -->
+        <section class="category">
+            <div class="category-header">
+                <h2>🔥 Sistema de Aquecimento</h2>
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>💡 Escolha 1 Opção:</strong>
+                <p>Você precisa de apenas UMA fonte de aquecimento. Recomendamos a lâmpada para iniciantes pela segurança.</p>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card" style="border-color: var(--success);">
+                    <span class="price-badge">RECOMENDADA</span>
+                    <div class="product-icon">💡</div>
+                    <div class="product-name">Lâmpada Incandescente</div>
+                    <div class="product-spec">100-150W, E27, 220V - Mais seguro!</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Leroy Merlin</div>
+                                <div class="store-shipping">Imediato</div>
+                            </div>
+                            <div class="store-price">R$ 8-12</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">+ Bocal E27</div>
+                                <div class="store-shipping">Necessário</div>
+                            </div>
+                            <div class="store-price">R$ 10-15</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">🔥</div>
+                    <div class="product-name">Fita Aquecedora 12V</div>
+                    <div class="product-spec">20-40W, silicone flexível - Muito seguro!</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 30-50</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">+ Fonte 12V 5A</div>
+                                <div class="store-shipping">Necessária</div>
+                            </div>
+                            <div class="store-price">R$ 40-60</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ventilação -->
+        <section class="category">
+            <div class="category-header">
+                <h2>💨 Ventilação</h2>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card" style="border-color: var(--success);">
+                    <span class="price-badge">RECOMENDADA</span>
+                    <div class="product-icon">🌀</div>
+                    <div class="product-name">Cooler 80mm 12V</div>
+                    <div class="product-spec">12V DC, 2000RPM - Silencioso e seguro</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 10-15</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Pichau/Kabum</div>
+                                <div class="store-shipping">3-7 dias</div>
+                            </div>
+                            <div class="store-price">R$ 20-35</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Estrutura -->
+        <section class="category">
+            <div class="category-header">
+                <h2>📦 Estrutura e Materiais</h2>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card">
+                    <div class="product-icon">📦</div>
+                    <div class="product-name">Caixa Hermética 60L</div>
+                    <div class="product-spec">Com vedação, isolamento térmico</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Leroy Merlin</div>
+                                <div class="store-shipping">Imediato</div>
+                            </div>
+                            <div class="store-price">R$ 50-80</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Tok&Stok</div>
+                                <div class="store-shipping">Imediato</div>
+                            </div>
+                            <div class="store-price">R$ 80-120</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-icon">💎</div>
+                    <div class="product-name">Sílica Gel 500g</div>
+                    <div class="product-spec">Recarregável, com indicador de cor</div>
+                    <div class="product-stores">
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">AliExpress</div>
+                                <div class="store-shipping">30-45 dias</div>
+                            </div>
+                            <div class="store-price">R$ 15-25</div>
+                        </div>
+                        <div class="store-item">
+                            <div>
+                                <div class="store-name">Amazon BR</div>
+                                <div class="store-shipping">1-3 dias</div>
+                            </div>
+                            <div class="store-price">R$ 35-50</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Checklist -->
+        <section class="shopping-checklist">
+            <h3>✅ Checklist de Compra Interativa</h3>
+            <p style="opacity: 0.8; margin-bottom: 1.5rem;">Clique nos itens para marcar como comprado</p>
+            
+            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Eletrônicos:</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">ESP32 DevKit</li>
+                <li onclick="this.classList.toggle('checked')">Sensor DHT22</li>
+                <li onclick="this.classList.toggle('checked')">Módulo Relé 2 canais</li>
+                <li onclick="this.classList.toggle('checked')">3x LEDs (RGB)</li>
+                <li onclick="this.classList.toggle('checked')">3x Resistores 220Ω</li>
+                <li onclick="this.classList.toggle('checked')">Cabos jumper M-F</li>
+                <li onclick="this.classList.toggle('checked')">Fonte 5V 2A</li>
+            </ul>
+            
+            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Aquecimento (escolha 1):</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">Lâmpada 100W + bocal</li>
+                <li onclick="this.classList.toggle('checked')">OU Fita aquecedora 12V + fonte</li>
+            </ul>
+            
+            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Ventilação:</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">Cooler 80mm 12V</li>
+            </ul>
+            
+            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Estrutura:</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">Caixa 60L hermética</li>
+                <li onclick="this.classList.toggle('checked')">Sílica gel 500g</li>
+            </ul>
+            
+            <h4 style="color: var(--primary); margin: 1.5rem 0 1rem;">Acessórios:</h4>
+            <ul class="checklist">
+                <li onclick="this.classList.toggle('checked')">Fita isolante</li>
+                <li onclick="this.classList.toggle('checked')">Abraçadeiras</li>
+                <li onclick="this.classList.toggle('checked')">Termocontrátil</li>
+                <li onclick="this.classList.toggle('checked')">Cola quente</li>
+            </ul>
+        </section>
+        
+        <!-- Dicas de Economia -->
+        <section class="category">
+            <div class="category-header">
+                <h2>💡 Dicas para Economizar</h2>
+            </div>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4>📦 Compre em Kit</h4>
+                    <p>Muitas lojas vendem "Arduino Starter Kit" que inclui LEDs, resistores e jumpers juntos.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>♻️ Reutilize</h4>
+                    <p>Use fonte de celular antigo, cooler de PC velho e caixas plásticas existentes.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🏷️ Black Friday</h4>
+                    <p>AliExpress tem até 70% desconto em Novembro. Vale a pena esperar!</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🚚 Frete Grátis</h4>
+                    <p>Sempre filtre por "Free Shipping" no AliExpress. Economize mais de R$ 20.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>💰 Cashback</h4>
+                    <p>Use apps como Méliuz e Ame para receber parte do dinheiro de volta.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h4>🎫 Cupons</h4>
+                    <p>Procure códigos de desconto no Pelando e Promobit antes de comprar.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Comparação de Custos -->
+        <section class="category">
+            <div class="category-header">
+                <h2>📊 Resumo de Custos por Opção</h2>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Econômica</th>
+                        <th>Híbrida</th>
+                        <th>Fast</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Eletrônicos</strong></td>
+                        <td>R$ 70-100</td>
+                        <td>R$ 90-130</td>
+                        <td>R$ 120-180</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aquecimento</strong></td>
+                        <td>R$ 70-110</td>
+                        <td>R$ 50-80</td>
+                        <td>R$ 20-30</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventoinha</strong></td>
+                        <td>R$ 10-15</td>
+                        <td>R$ 15-25</td>
+                        <td>R$ 25-35</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estrutura</strong></td>
+                        <td>R$ 50-75</td>
+                        <td>R$ 70-100</td>
+                        <td>R$ 85-135</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acessórios</strong></td>
+                        <td>R$ 20-30</td>
+                        <td>R$ 25-35</td>
+                        <td>R$ 30-40</td>
+                    </tr>
+                    <tr style="background: rgba(0, 255, 136, 0.1); font-weight: bold;">
+                        <td><strong>TOTAL</strong></td>
+                        <td style="color: var(--success);">R$ 220-330</td>
+                        <td style="color: var(--success);">R$ 250-370</td>
+                        <td style="color: var(--success);">R$ 280-420</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Navegação -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="index.html" class="btn">← Voltar para Home</a>
+            <a href="diagrama_conexoes.html" class="btn">Ver Diagrama</a>
+            <a href="guia_instalacao.html" class="btn">Ver Guia →</a>
+        </div>
+    </div>
+</body>
+</html>

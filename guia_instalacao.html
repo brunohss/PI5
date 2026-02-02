@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Instalação - Estufa para Filamentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #0066ff;
+            --accent: #ff3366;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --dark: #0a0e27;
+            --darker: #050817;
+            --light: #e0f7ff;
+            --code-bg: #1a1e3e;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            padding: 2rem;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            max-width: 1600px;
+            margin: 0 auto;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+        
+        .sidebar h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+            padding-left: 1rem;
+        }
+        
+        /* Main Content */
+        .content {
+            max-width: 900px;
+        }
+        
+        .section {
+            background: rgba(0, 217, 255, 0.03);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+        
+        h4 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Code blocks */
+        code {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--success);
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            display: block;
+            color: var(--light);
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        tr:hover {
+            background: rgba(0, 217, 255, 0.05);
+        }
+        
+        /* Alert boxes */
+        .alert {
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+        }
+        
+        .alert-danger {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .alert strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        /* Steps */
+        .step {
+            background: rgba(0, 102, 255, 0.05);
+            border-left: 4px solid var(--secondary);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .checklist li {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .checklist li::before {
+            content: '☐';
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--darker);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.5);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+        
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: var(--darker);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 Guia de Instalação</h1>
+        <div class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span>Guia de Instalação</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <h3>📑 Navegação</h3>
+            <ul class="nav-links">
+                <li><a href="#software">Instalação do Software</a></li>
+                <li><a href="#config">Configuração Inicial</a></li>
+                <li><a href="#upload">Upload do Código</a></li>
+                <li><a href="#primeiro-uso">Primeiro Uso</a></li>
+                <li><a href="#operacao">Manual de Operação</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#melhorias">Melhorias Futuras</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content">
+            <!-- Instalação do Software -->
+            <section class="section" id="software">
+                <h2>🔧 Instalação do Software</h2>
+                
+                <div class="step">
+                    <span class="step-number">Passo 1</span>
+                    <h3>Instalar Arduino IDE</h3>
+                    <p>Baixe e instale a versão mais recente do Arduino IDE (2.x recomendado).</p>
+                    <div class="alert alert-info">
+                        <strong>💡 Link de Download:</strong>
+                        <a href="https://www.arduino.cc/en/software" target="_blank" style="color: var(--primary);">
+                            https://www.arduino.cc/en/software
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">Passo 2</span>
+                    <h3>Configurar ESP32 no Arduino IDE</h3>
+                    <ol>
+                        <li>Abra Arduino IDE</li>
+                        <li>Vá em <strong>File → Preferences</strong></li>
+                        <li>Em "Additional Board Manager URLs", adicione:</li>
+                    </ol>
+                    <pre><code>https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</code></pre>
+                    <ol start="4">
+                        <li>Clique OK</li>
+                        <li>Vá em <strong>Tools → Board → Boards Manager</strong></li>
+                        <li>Busque por "ESP32"</li>
+                        <li>Instale "ESP32 by Espressif Systems"</li>
+                    </ol>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">Passo 3</span>
+                    <h3>Instalar Bibliotecas Necessárias</h3>
+                    <p>Vá em <strong>Sketch → Include Library → Manage Libraries</strong> e instale:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Biblioteca</th>
+                                <th>Versão</th>
+                                <th>Autor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>DHT sensor library</strong></td>
+                                <td>Última</td>
+                                <td>Adafruit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Adafruit Unified Sensor</strong></td>
+                                <td>Última</td>
+                                <td>Adafruit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PID</strong></td>
+                                <td>Última</td>
+                                <td>Brett Beauregard</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="alert alert-info">
+                        <strong>Como instalar:</strong>
+                        <ol>
+                            <li>Na busca, digite o nome da biblioteca</li>
+                            <li>Clique em "Install"</li>
+                            <li>Aguarde conclusão</li>
+                            <li>Repita para todas</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">Passo 4</span>
+                    <h3>Selecionar a Placa</h3>
+                    <ol>
+                        <li>Conecte o ESP32 via USB</li>
+                        <li>Vá em <strong>Tools → Board → ESP32 Arduino</strong></li>
+                        <li>Selecione <strong>ESP32 Dev Module</strong> (ou sua placa específica)</li>
+                        <li>Em <strong>Tools → Port</strong>, selecione a porta COM do ESP32:
+                            <ul>
+                                <li>Windows: COMx</li>
+                                <li>Linux: /dev/ttyUSBx</li>
+                                <li>Mac: /dev/cu.usbserial-xxxx</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- Configuração Inicial -->
+            <section class="section" id="config">
+                <h2>⚙️ Configuração Inicial</h2>
+                
+                <h3>Editar Credenciais WiFi</h3>
+                <p>Abra o arquivo <code>estufa_filamentos.ino</code> e localize estas linhas:</p>
+                
+                <pre><code>// ===== CONFIGURAÇÕES DE REDE =====
+const char* ssid = "SUA_REDE_WIFI";           // Altere aqui
+const char* password = "SUA_SENHA_WIFI";      // Altere aqui</code></pre>
+                
+                <p>Substitua por:</p>
+                
+                <pre><code>const char* ssid = "MinhaRedeWiFi";      // Nome da sua rede
+const char* password = "minhaSenha123";   // Senha da sua rede</code></pre>
+                
+                <div class="alert alert-warning">
+                    <strong>⚠️ IMPORTANTE:</strong>
+                    O ESP32 suporta apenas redes WiFi 2.4GHz. Redes 5GHz não funcionarão!
+                </div>
+                
+                <h3>Verificar Pinos (Opcional)</h3>
+                <p>Se estiver usando pinos diferentes, edite:</p>
+                
+                <pre><code>// ===== PINOS =====
+#define DHTPIN 4              // Pino do DHT22
+#define RELE_RESISTENCIA 5    // Relé da resistência
+#define RELE_VENTOINHA 18     // Relé da ventoinha
+#define LED_WIFI 2            // LED WiFi
+#define LED_RESISTENCIA 15    // LED Resistência
+#define LED_VENTOINHA 19      // LED Ventoinha</code></pre>
+            </section>
+            
+            <!-- Upload do Código -->
+            <section class="section" id="upload">
+                <h2>📤 Upload do Código</h2>
+                
+                <h3>Processo de Upload</h3>
+                <ol>
+                    <li><strong>Conecte</strong> o ESP32 via USB</li>
+                    <li><strong>Abra</strong> o arquivo <code>estufa_filamentos.ino</code></li>
+                    <li><strong>Verifique</strong> se a placa e porta estão corretas em Tools</li>
+                    <li>Clique em <strong>Upload</strong> (seta para direita) ou Ctrl+U</li>
+                    <li>Aguarde compilação e upload</li>
+                </ol>
+                
+                <div class="alert alert-warning">
+                    <strong>Se der erro "Failed to connect":</strong>
+                    <ul>
+                        <li>Segure o botão <strong>BOOT</strong> no ESP32</li>
+                        <li>Clique em Upload novamente</li>
+                        <li>Solte o botão quando começar a gravar</li>
+                    </ul>
+                </div>
+                
+                <h3>Monitorar Serial</h3>
+                <p>Após upload bem-sucedido:</p>
+                <ol>
+                    <li>Abra <strong>Tools → Serial Monitor</strong></li>
+                    <li>Configure velocidade para <strong>115200 baud</strong></li>
+                    <li>Você verá:</li>
+                </ol>
+                
+                <pre><code>=== ESTUFA PARA FILAMENTOS ===
+Conectando WiFi.........
+WiFi Conectado!
+IP: 192.168.1.100
+Servidor web iniciado!</code></pre>
+                
+                <div class="alert alert-success">
+                    <strong>⚠️ IMPORTANTE:</strong>
+                    Anote o endereço IP mostrado! Você precisará dele para acessar a interface web.
+                </div>
+            </section>
+            
+            <!-- Primeiro Uso -->
+            <section class="section" id="primeiro-uso">
+                <h2>🚀 Primeiro Uso</h2>
+                
+                <h3>Acesso ao Painel Web</h3>
+                <ol>
+                    <li>Certifique-se que seu computador/celular está na <strong>mesma rede WiFi</strong></li>
+                    <li>Abra um navegador (Chrome, Firefox, Safari)</li>
+                    <li>Digite na barra de endereços: <code>http://192.168.1.100</code>
+                        <br><small>(Use o IP mostrado no Serial Monitor)</small>
+                    </li>
+                    <li>A interface web deve carregar!</li>
+                </ol>
+                
+                <div class="alert alert-info">
+                    <strong>Interface Web - Visão Geral</strong>
+                    <p>A interface mostra:</p>
+                    <ul>
+                        <li>📊 Cards com Temperatura, Umidade, Setpoint e Validade</li>
+                        <li>🎛️ Seletor de Material (PLA, PETG, ABS, Nylon, TPU)</li>
+                        <li>⚙️ Controles: Ligar/Desligar Sistema, Resetar Validade</li>
+                        <li>🔥 Botões de Modo: Secagem e Armazenamento</li>
+                        <li>💡 Indicadores: Resistência e Ventoinha</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Manual de Operação -->
+            <section class="section" id="operacao">
+                <h2>📖 Manual de Operação</h2>
+                
+                <h3>Como Secar um Filamento Novo</h3>
+                <p><strong>Cenário:</strong> Você comprou um rolo novo de PLA que precisa ser seco.</p>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <p>Ligue o sistema clicando em "Ligar Sistema". O LED WiFi deve estar aceso.</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <p>No dropdown "Material Selecionado", escolha <strong>PLA</strong>. O sistema ajusta temperatura automaticamente.</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <p>Clique no botão <strong>"🔥 Secagem"</strong>. Sistema aquece para 50°C e timer inicia (5h para PLA).</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <p>Monitore o processo. A temperatura deve subir até ~50°C, resistência ligará/desligará automaticamente, e ventoinha permanece ligada.</p>
+                </div>
+                
+                <div class="step">
+                    <span class="step-number">5</span>
+                    <p>Após 5 horas, sistema <strong>automaticamente</strong> muda para "Armazenamento", reduz temperatura para 28°C e reseta validade para 730 dias.</p>
+                </div>
+                
+                <h3>Como Armazenar Filamento</h3>
+                <p><strong>Cenário:</strong> Filamento já está seco e você quer mantê-lo assim.</p>
+                <ol>
+                    <li>Ligue o sistema</li>
+                    <li>Selecione o material (ex: PETG)</li>
+                    <li>Clique em <strong>"📦 Armazenamento"</strong></li>
+                    <li>Sistema mantém temperatura 30°C, umidade <15% e contador de validade ativo</li>
+                </ol>
+                
+                <h3>Tabela de Referência por Material</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Temp Secagem</th>
+                            <th>Tempo</th>
+                            <th>Temp Armazenamento</th>
+                            <th>Umidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PLA</strong></td>
+                            <td>50°C</td>
+                            <td>5h</td>
+                            <td>28°C</td>
+                            <td>&lt;20%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PETG</strong></td>
+                            <td>65°C</td>
+                            <td>7h</td>
+                            <td>30°C</td>
+                            <td>&lt;15%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ABS</strong></td>
+                            <td>70°C</td>
+                            <td>8h</td>
+                            <td>40°C</td>
+                            <td>&lt;10%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nylon</strong></td>
+                            <td>80°C</td>
+                            <td>12h</td>
+                            <td>45°C</td>
+                            <td>&lt;10%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TPU</strong></td>
+                            <td>50°C</td>
+                            <td>4h</td>
+                            <td>25°C</td>
+                            <td>&lt;20%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- Troubleshooting -->
+            <section class="section" id="troubleshooting">
+                <h2>🔍 Troubleshooting</h2>
+                
+                <h3>ESP32 não conecta WiFi</h3>
+                <div class="alert alert-danger">
+                    <strong>Sintomas:</strong>
+                    <p>Serial Monitor mostra "Conectando WiFi........" infinitamente. LED WiFi não acende.</p>
+                </div>
+                <div class="alert alert-success">
+                    <strong>Soluções:</strong>
+                    <ol>
+                        <li>Verifique SSID e senha no código</li>
+                        <li>Certifique-se que WiFi é 2.4GHz (ESP32 não suporta 5GHz)</li>
+                        <li>Aproxime ESP32 do roteador</li>
+                        <li>Reinicie ESP32 (botão RST ou desconectar USB)</li>
+                        <li>Teste com hotspot do celular</li>
+                    </ol>
+                </div>
+                
+                <h3>DHT22 mostra "--" ou NaN</h3>
+                <div class="alert alert-danger">
+                    <strong>Sintomas:</strong>
+                    <p>Temperatura/umidade aparecem como "--". Serial Monitor mostra "Erro ao ler DHT22!"</p>
+                </div>
+                <div class="alert alert-success">
+                    <strong>Soluções:</strong>
+                    <ol>
+                        <li>Verifique conexões do DHT22 (VCC, DATA, GND)</li>
+                        <li>Adicione resistor pull-up 10kΩ entre DATA e VCC</li>
+                        <li>Troque DHT22 (pode estar defeituoso)</li>
+                        <li>Use cabo mais curto (&lt;50cm)</li>
+                        <li>Teste com código exemplo: File → Examples → DHT sensor library → DHTtester</li>
+                    </ol>
+                </div>
+                
+                <h3>Relés não acionam</h3>
+                <div class="alert alert-danger">
+                    <strong>Sintomas:</strong>
+                    <p>Não ouve "click" dos relés. Resistência/ventoinha não ligam.</p>
+                </div>
+                <div class="alert alert-success">
+                    <strong>Soluções:</strong>
+                    <ol>
+                        <li>Verifique se relé está recebendo 5V (VCC/GND)</li>
+                        <li>Teste invertendo lógica (alguns relés são ativos em LOW)</li>
+                        <li>Verifique se GPIO escolhido suporta output</li>
+                        <li>Teste manual via código temporário</li>
+                    </ol>
+                </div>
+                
+                <h3>Temperatura não estabiliza</h3>
+                <div class="alert alert-danger">
+                    <strong>Sintomas:</strong>
+                    <p>Temperatura oscila muito (±5°C). Nunca alcança setpoint.</p>
+                </div>
+                <div class="alert alert-success">
+                    <strong>Soluções:</strong>
+                    <ol>
+                        <li>Ajustar PID: Aumente Ki, aumente Kd, reduza Kp</li>
+                        <li>Melhorar isolamento da caixa</li>
+                        <li>Reduzir potência da resistência</li>
+                        <li>Adicionar massa térmica (água em garrafa)</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- Melhorias Futuras -->
+            <section class="section" id="melhorias">
+                <h2>🚀 Melhorias Futuras</h2>
+                
+                <h3>Nível Iniciante</h3>
+                <ul>
+                    <li><strong>Display OLED local</strong> - Mostrar status sem precisar de WiFi</li>
+                    <li><strong>Buzzer de alerta</strong> - Apitar quando secagem completar</li>
+                    <li><strong>Botões físicos</strong> - Ligar/desligar sem web</li>
+                </ul>
+                
+                <h3>Nível Intermediário</h3>
+                <ul>
+                    <li><strong>Integração com Blynk</strong> - Notificações no celular</li>
+                    <li><strong>Data Logger SD Card</strong> - Salvar logs e gerar gráficos</li>
+                    <li><strong>Múltiplos sensores</strong> - 1 DHT22 por rolo</li>
+                    <li><strong>Alimentação direta</strong> - Tubo PTFE da estufa para extrusora</li>
+                </ul>
+                
+                <h3>Nível Avançado</h3>
+                <ul>
+                    <li><strong>Controle via MQTT</strong> - Integração Home Assistant</li>
+                    <li><strong>AI/Machine Learning</strong> - Predição de degradação</li>
+                    <li><strong>Sistema Multi-Zona</strong> - Até 10 rolos independentes</li>
+                </ul>
+            </section>
+            
+            <!-- Checklist Final -->
+            <section class="section">
+                <h2>✅ Checklist de Verificação</h2>
+                <p>Antes de ligar pela primeira vez:</p>
+                
+                <ul class="checklist">
+                    <li>Conferir todas as conexões contra o diagrama</li>
+                    <li>Verificar polaridade de LEDs (+/-)</li>
+                    <li>Testar isolamento do circuito 220V</li>
+                    <li>Confirmar relés com carga pequena</li>
+                    <li>WiFi configurado corretamente</li>
+                    <li>Serial Monitor funcionando (115200 baud)</li>
+                    <li>IP anotado</li>
+                    <li>Página web carrega</li>
+                    <li>DHT22 lê temperatura ambiente</li>
+                    <li>Todos os LEDs acendem no teste</li>
+                    <li>Backup do código feito</li>
+                </ul>
+                
+                <div class="alert alert-success">
+                    <strong>🎉 Parabéns!</strong>
+                    <p>Se todos os itens estão verificados, você está pronto para usar sua estufa inteligente!</p>
+                </div>
+                
+                <a href="index.html" class="btn">← Voltar para Home</a>
+                <a href="diagrama_conexoes.html" class="btn">Ver Diagrama de Conexões →</a>
+            </section>
+        </main>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">↑</div>
+    
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Active navigation highlighting
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

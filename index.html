@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estufa Inteligente para Filamentos - Projeto DIY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #0066ff;
+            --accent: #ff3366;
+            --dark: #0a0e27;
+            --darker: #050817;
+            --light: #e0f7ff;
+            --success: #00ff88;
+            --warning: #ffaa00;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Background animado */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            top: -250px;
+            right: -250px;
+            opacity: 0.1;
+            animation: float 20s infinite alternate;
+        }
+        
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            opacity: 0.1;
+            animation: float 25s infinite alternate-reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(360deg); }
+        }
+        
+        /* Grid pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(var(--primary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.03;
+        }
+        
+        /* Header */
+        header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150%;
+            height: 200%;
+            background: radial-gradient(ellipse, var(--primary) 0%, transparent 50%);
+            opacity: 0.05;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.05; }
+            50% { transform: translateX(-50%) scale(1.1); opacity: 0.08; }
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: slideDown 1s ease-out;
+            text-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            color: var(--primary);
+            font-weight: 300;
+            animation: fadeIn 1s ease-out 0.3s both;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 217, 255, 0.05);
+            border: 2px solid rgba(0, 217, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideUp 0.8s ease-out both;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.2s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.6s; }
+        .stat-card:nth-child(4) { animation-delay: 0.8s; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.3);
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Features */
+        .features {
+            margin: 6rem 0;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 102, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .feature-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-desc {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        /* CTA Buttons */
+        .cta-section {
+            text-align: center;
+            margin: 6rem 0;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+        
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--darker);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.6);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+        }
+        
+        /* Tech Stack */
+        .tech-stack {
+            margin: 6rem 0;
+            text-align: center;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .tech-item {
+            padding: 2rem;
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-item:hover {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .tech-item img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+            filter: brightness(0) invert(1);
+            opacity: 0.7;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 6rem;
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        footer p {
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .social-links a {
+            color: var(--primary);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1rem; }
+            .stats { grid-template-columns: 1fr; }
+            .cta-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+        
+        /* Scroll animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+    
+    <header>
+        <h1>🌡️ ESTUFA INTELIGENTE</h1>
+        <p class="subtitle">SISTEMA IOT PARA FILAMENTOS DE IMPRESSORA 3D</p>
+    </header>
+    
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <p>
+                    Sistema automatizado de controle de temperatura e umidade para armazenamento 
+                    e secagem de filamentos, baseado em <strong>ESP32</strong> com interface web responsiva.
+                    Desenvolvido com foco em baixo custo, facilidade de montagem e resultados profissionais.
+                </p>
+            </div>
+        </section>
+        
+        <section class="stats">
+            <div class="stat-card">
+                <span class="stat-number">R$ 250</span>
+                <span class="stat-label">Custo Médio</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Perfis de Material</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">±0.5°C</span>
+                <span class="stat-label">Precisão</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Open Source</span>
+            </div>
+        </section>
+        
+        <section class="features fade-in-section">
+            <h2 class="section-title">Funcionalidades Principais</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">Controle PID</h3>
+                    <p class="feature-desc">
+                        Sistema de controle proporcional-integral-derivativo para manutenção 
+                        precisa da temperatura com oscilação mínima (±1°C).
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h3 class="feature-title">Interface Web</h3>
+                    <p class="feature-desc">
+                        Acesso via WiFi de qualquer dispositivo. Design responsivo, 
+                        intuitivo e atualização em tempo real dos parâmetros.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🔥</span>
+                    <h3 class="feature-title">Modo Secagem</h3>
+                    <p class="feature-desc">
+                        Secagem automática com temperatura elevada e timer programado. 
+                        Muda automaticamente para modo armazenamento ao concluir.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">📦</span>
+                    <h3 class="feature-title">Armazenamento</h3>
+                    <p class="feature-desc">
+                        Mantém condições ideais de temperatura e umidade para preservar 
+                        as propriedades dos filamentos por até 2 anos.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">⏰</span>
+                    <h3 class="feature-title">Contador de Validade</h3>
+                    <p class="feature-desc">
+                        Rastreamento automático da vida útil do filamento com alertas 
+                        quando próximo ao vencimento (<30 dias).
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">💡</span>
+                    <h3 class="feature-title">Indicadores LED</h3>
+                    <p class="feature-desc">
+                        Status visual em tempo real: WiFi conectado, resistência ativa 
+                        e ventoinha em operação.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="tech-stack fade-in-section">
+            <h2 class="section-title">Stack Tecnológico</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚡</div>
+                    <p><strong>ESP32</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">WiFi + Bluetooth</p>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🌡️</div>
+                    <p><strong>DHT22</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">Sensor Preciso</p>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔌</div>
+                    <p><strong>Relés</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">Controle AC/DC</p>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎨</div>
+                    <p><strong>Web UI</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">HTML5 + CSS3</p>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                    <p><strong>Arduino</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">Framework</p>
+                </div>
+                <div class="tech-item">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📡</div>
+                    <p><strong>API REST</strong></p>
+                    <p style="font-size: 0.9rem; opacity: 0.7;">Endpoints JSON</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-section fade-in-section">
+            <h2 class="section-title">Comece Agora</h2>
+            <p style="max-width: 600px; margin: 0 auto 2rem; opacity: 0.9;">
+                Todos os arquivos do projeto estão prontos para download. 
+                Escolha a documentação que precisa e comece a construir sua estufa!
+            </p>
+            <div class="cta-buttons">
+                <a href="guia_instalacao.html" class="btn btn-primary">
+                    <span>📚 Guia de Instalação</span>
+                </a>
+                <a href="diagrama_conexoes.html" class="btn btn-secondary">
+                    <span>🔌 Diagrama de Conexões</span>
+                </a>
+                <a href="lista_compras.html" class="btn btn-secondary">
+                    <span>🛒 Lista de Compras</span>
+                </a>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 Estufa Inteligente para Filamentos - Projeto Open Source</p>
+        <p style="font-size: 0.9rem;">
+            Desenvolvido com ❤️ pela comunidade Maker brasileira
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 1rem; opacity: 0.6;">
+            Licença MIT - Use, modifique e distribua livremente
+        </p>
+    </footer>
+    
+    <script>
+        // Scroll animation
+        const faders = document.querySelectorAll('.fade-in-section');
+        
+        const appearOptions = {
+            threshold: 0.2,
+            rootMargin: "0px 0px -100px 0px"
+        };
+        
+        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-visible');
+                appearOnScroll.unobserve(entry.target);
+            });
+        }, appearOptions);
+        
+        faders.forEach(fader => {
+            appearOnScroll.observe(fader);
+        });
+        
+        // Parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+            
+            document.querySelector('.bg-animation').style.transform = 
+                `translate(${moveX}px, ${moveY}px)`;
+        });
+    </script>
+</body>
+</html>

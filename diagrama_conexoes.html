@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Conexões - Estufa para Filamentos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto+Mono:wght@400;600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #0066ff;
+            --accent: #ff3366;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff3366;
+            --dark: #0a0e27;
+            --darker: #050817;
+            --light: #e0f7ff;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            padding: 2rem;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .section {
+            background: rgba(0, 217, 255, 0.03);
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+        
+        /* Diagrama */
+        .diagram {
+            background: var(--dark);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        
+        .diagram pre {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--success);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        
+        /* Tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-top: 1px solid rgba(0, 217, 255, 0.1);
+        }
+        
+        tr:hover {
+            background: rgba(0, 217, 255, 0.05);
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-danger {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--danger);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+        }
+        
+        .alert strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Cards de Componentes */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .component-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 102, 255, 0.05));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .component-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+        
+        .component-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .component-name {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .component-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Pin Grid */
+        .pin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .pin-item {
+            background: rgba(0, 217, 255, 0.05);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .pin-label {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pin-value {
+            color: var(--success);
+            font-size: 0.9rem;
+        }
+        
+        /* Segurança */
+        .safety-box {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 170, 0, 0.1));
+            border: 2px solid var(--danger);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .safety-box h3 {
+            color: var(--danger);
+            font-size: 1.8rem;
+            margin-top: 0;
+        }
+        
+        .safety-list {
+            list-style: none;
+        }
+        
+        .safety-list li {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .safety-list li::before {
+            content: '⚠️ ';
+            margin-right: 0.5rem;
+        }
+        
+        /* Code */
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: var(--dark);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--success);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--darker);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.5);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            color: var(--primary);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .component-grid, .pin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔌 Diagrama de Conexões</h1>
+        <div class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span>/</span>
+            <span>Diagrama de Conexões</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Diagrama Principal -->
+        <section class="section">
+            <h2>📐 Esquema de Ligação</h2>
+            
+            <div class="diagram">
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                          ESP32                                   │
+│                                                                  │
+│  3V3 ────────┬──────────────────────────────┐                   │
+│              │                               │                   │
+│  GPIO 4 ─────┼─────── DHT22 (DATA)           │                   │
+│              │                               │                   │
+│  GND ────────┴──────────────────────────────┴─── DHT22 (GND)    │
+│                                                                  │
+│  GPIO 5 ─────────── RELÉ 1 (IN) ──┐                             │
+│                                    │                             │
+│  GPIO 18 ────────── RELÉ 2 (IN) ──┤                             │
+│                                    │                             │
+│  VIN/5V ────────── RELÉ (VCC) ────┤                             │
+│                                    │                             │
+│  GND ──────────── RELÉ (GND) ──────┘                             │
+│                                                                  │
+│  GPIO 2 ────────── LED WiFi ─────── 220Ω ─── GND               │
+│  GPIO 15 ───────── LED Resistência ── 220Ω ─── GND              │
+│  GPIO 19 ───────── LED Ventoinha ──── 220Ω ─── GND              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                     MÓDULO DE 2 RELÉS                             │
+│                                                                   │
+│  VCC ─── 5V do ESP32                                              │
+│  GND ─── GND do ESP32                                             │
+│  IN1 ─── GPIO 5 (Resistência)                                     │
+│  IN2 ─── GPIO 18 (Ventoinha)                                      │
+│                                                                   │
+│  RELÉ 1 (NO/COM):                                                 │
+│    COM ─── Fase (220V)                                            │
+│    NO  ─── RESISTÊNCIA DE AQUECIMENTO                             │
+│                                                                   │
+│  RELÉ 2 (NO/COM):                                                 │
+│    COM ─── Fase (220V)                                            │
+│    NO  ─── VENTOINHA 220V                                         │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </section>
+        
+        <!-- Lista de Componentes -->
+        <section class="section">
+            <h2>🛠️ Lista de Componentes</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Especificação</th>
+                        <th>Quantidade</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ESP32 DevKit</strong></td>
+                        <td>ESP32 WROOM</td>
+                        <td>1</td>
+                        <td>Ou ESP8266 NodeMCU</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DHT22</strong></td>
+                        <td>AM2302</td>
+                        <td>1</td>
+                        <td>Sensor temp/umidade</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Módulo Relé</strong></td>
+                        <td>5V 2 canais</td>
+                        <td>1</td>
+                        <td>10A mínimo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LEDs</strong></td>
+                        <td>5mm (vermelho/verde/azul)</td>
+                        <td>3</td>
+                        <td>Indicadores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resistores</strong></td>
+                        <td>220Ω 1/4W</td>
+                        <td>3</td>
+                        <td>Para LEDs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Resistência</strong></td>
+                        <td>100-200W</td>
+                        <td>1</td>
+                        <td>Aquecimento (lâmpada)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ventoinha</strong></td>
+                        <td>80mm 220V</td>
+                        <td>1</td>
+                        <td>Circulação de ar</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fonte</strong></td>
+                        <td>5V 2A Micro-USB</td>
+                        <td>1</td>
+                        <td>Para ESP32</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <!-- Conexões Detalhadas -->
+        <section class="section">
+            <h2>🔗 Conexões Detalhadas</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('dht22')">DHT22</button>
+                <button class="tab" onclick="switchTab('reles')">Relés</button>
+                <button class="tab" onclick="switchTab('leds')">LEDs</button>
+            </div>
+            
+            <div id="dht22" class="tab-content active">
+                <h3>Sensor DHT22</h3>
+                <div class="pin-grid">
+                    <div class="pin-item">
+                        <div class="pin-label">DHT22 Pino 1 (VCC)</div>
+                        <div class="pin-value">→ ESP32 3V3</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">DHT22 Pino 2 (DATA)</div>
+                        <div class="pin-value">→ ESP32 GPIO 4</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">DHT22 Pino 3 (NC)</div>
+                        <div class="pin-value">→ Não conectar</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">DHT22 Pino 4 (GND)</div>
+                        <div class="pin-value">→ ESP32 GND</div>
+                    </div>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>💡 Dica:</strong>
+                    Adicione resistor pull-up de 10kΩ entre DATA e VCC (opcional, mas recomendado para estabilidade).
+                </div>
+            </div>
+            
+            <div id="reles" class="tab-content">
+                <h3>Módulo de Relés</h3>
+                <div class="pin-grid">
+                    <div class="pin-item">
+                        <div class="pin-label">RELÉ VCC</div>
+                        <div class="pin-value">→ ESP32 VIN (5V)</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">RELÉ GND</div>
+                        <div class="pin-value">→ ESP32 GND</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">RELÉ IN1</div>
+                        <div class="pin-value">→ ESP32 GPIO 5 (Resistência)</div>
+                    </div>
+                    <div class="pin-item">
+                        <div class="pin-label">RELÉ IN2</div>
+                        <div class="pin-value">→ ESP32 GPIO 18 (Ventoinha)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="leds" class="tab-content">
+                <h3>LEDs Indicadores</h3>
+                <div class="component-grid">
+                    <div class="component-card">
+                        <span class="component-icon">🔵</span>
+                        <div class="component-name">LED WiFi (Azul)</div>
+                        <div class="component-desc">
+                            Ânodo → GPIO 2 → 220Ω → Cátodo → GND
+                        </div>
+                    </div>
+                    <div class="component-card">
+                        <span class="component-icon">🔴</span>
+                        <div class="component-name">LED Resistência (Vermelho)</div>
+                        <div class="component-desc">
+                            Ânodo → GPIO 15 → 220Ω → Cátodo → GND
+                        </div>
+                    </div>
+                    <div class="component-card">
+                        <span class="component-icon">🟢</span>
+                        <div class="component-name">LED Ventoinha (Verde)</div>
+                        <div class="component-desc">
+                            Ânodo → GPIO 19 → 220Ω → Cátodo → GND
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Segurança -->
+        <section class="section">
+            <div class="safety-box">
+                <h3>⚠️ SEGURANÇA - IMPORTANTE!</h3>
+                
+                <h4 style="color: var(--danger); margin-top: 1rem;">Atenção com Alta Tensão (220V)</h4>
+                <ul class="safety-list">
+                    <li><strong>NUNCA</strong> trabalhe com o sistema ligado na tomada</li>
+                    <li>Use relés com <strong>isolação óptica</strong></li>
+                    <li>Mantenha circuito de controle (5V) <strong>separado</strong> do circuito de potência (220V)</li>
+                    <li>Use <strong>fios adequados</strong> para 220V (mínimo 1.5mm²)</li>
+                    <li>Adicione <strong>fusível</strong> de proteção (10A)</li>
+                    <li>Use caixa <strong>isolada</strong> para conexões 220V</li>
+                    <li><strong>Aterramento</strong> adequado é obrigatório</li>
+                </ul>
+                
+                <div class="alert alert-danger" style="margin-top: 1.5rem;">
+                    <strong>🚨 PERIGO DE CHOQUE ELÉTRICO</strong>
+                    <p>Circuitos de 220V podem causar lesões graves ou morte. Se não tem experiência com eletricidade, peça ajuda a um profissional!</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Alternativas Seguras -->
+        <section class="section">
+            <h2>✅ Alternativas Mais Seguras</h2>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <span class="component-icon">🔋</span>
+                    <div class="component-name">Sistema 12V DC</div>
+                    <div class="component-desc">
+                        <ul style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            <li>Resistência: Fita aquecedora 12V</li>
+                            <li>Ventoinha: Cooler 12V PC (80mm)</li>
+                            <li>Fonte: 12V 5A</li>
+                            <li><strong>Muito mais seguro!</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="component-card">
+                    <span class="component-icon">💡</span>
+                    <div class="component-name">Lâmpada de Aquário</div>
+                    <div class="component-desc">
+                        <ul style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            <li>Lâmpada incandescente 40-60W</li>
+                            <li>Termostato próprio</li>
+                            <li>Mais seguro para iniciantes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Montagem na Estufa -->
+        <section class="section">
+            <h2>📦 Montagem na Estufa</h2>
+            
+            <div class="diagram">
+                <pre>
+Vista Superior da Caixa:
+┌────────────────────────────────────┐
+│  [DHT22]                      [LED]│
+│                                    │
+│    ╔════════╗  ╔════════╗          │
+│    ║ ROLO 1 ║  ║ ROLO 2 ║          │
+│    ╚════════╝  ╚════════╝          │
+│                                    │
+│  [RESISTÊNCIA]        [VENTOINHA] │
+└────────────────────────────────────┘
+
+Posicionamento:
+- DHT22: Centro, altura média
+- Resistência: Base (lâmpada para cima)
+- Ventoinha: Base (puxar ar de baixo)
+- LEDs: Tampa transparente ou lateral
+                </pre>
+            </div>
+            
+            <div class="alert alert-success">
+                <strong>💡 Dica de Montagem:</strong>
+                <ul>
+                    <li>Corte furos para fios e ventilação</li>
+                    <li>Use suportes impressos em 3D para fixação</li>
+                    <li>Mantenha circuito eletrônico isolado do calor</li>
+                    <li>Adicione sílica gel no fundo da caixa</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Botões de Navegação -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <a href="index.html" class="btn">← Voltar para Home</a>
+            <a href="guia_instalacao.html" class="btn">Guia de Instalação</a>
+            <a href="lista_compras.html" class="btn">Lista de Compras →</a>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
