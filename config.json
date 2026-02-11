@@ -1,0 +1,115 @@
+{
+  "device": {
+    "name": "PrintSense-001",
+    "location": "Farm Impressoras - Sala A",
+    "timezone_offset": -10800
+  },
+  "wifi": {
+    "mode": "AP",
+    "ap_ssid": "PrintSense",
+    "ap_password": "printsense123",
+    "sta_ssid": "",
+    "sta_password": ""
+  },
+  "materials": {
+    "PLA": {
+      "temperature_min": 18,
+      "temperature_max": 28,
+      "humidity_min": 40,
+      "humidity_max": 60,
+      "light_max": 500,
+      "sound_max": 70,
+      "description": "Material mais tolerante, ideal para iniciantes"
+    },
+    "PETG": {
+      "temperature_min": 20,
+      "temperature_max": 30,
+      "humidity_min": 30,
+      "humidity_max": 50,
+      "light_max": 500,
+      "sound_max": 70,
+      "description": "Sensível à umidade, requer controle moderado"
+    },
+    "ABS": {
+      "temperature_min": 22,
+      "temperature_max": 32,
+      "humidity_min": 20,
+      "humidity_max": 40,
+      "light_max": 500,
+      "sound_max": 70,
+      "description": "Requer ambiente controlado, baixa umidade"
+    },
+    "RESINA": {
+      "temperature_min": 20,
+      "temperature_max": 25,
+      "humidity_min": 40,
+      "humidity_max": 60,
+      "light_max": 100,
+      "sound_max": 60,
+      "description": "Muito sensível à luz e temperatura"
+    }
+  },
+  "sensors": {
+    "dht22": {
+      "enabled": true,
+      "pin": 4,
+      "read_interval": 2000
+    },
+    "bh1750": {
+      "enabled": true,
+      "i2c_address": "0x23",
+      "mode": "CONTINUOUS_HIGH_RES"
+    },
+    "sound": {
+      "enabled": true,
+      "pin": 34,
+      "calibration_offset": 0
+    },
+    "vibration": {
+      "enabled": false,
+      "pin": 35,
+      "threshold": 100
+    }
+  },
+  "logging": {
+    "enabled": true,
+    "interval_seconds": 60,
+    "max_file_size_mb": 10,
+    "rotate_daily": true,
+    "compression": false
+  },
+  "alerts": {
+    "enabled": false,
+    "telegram": {
+      "enabled": false,
+      "bot_token": "",
+      "chat_id": ""
+    },
+    "email": {
+      "enabled": false,
+      "smtp_server": "",
+      "smtp_port": 587,
+      "username": "",
+      "password": "",
+      "recipient": ""
+    },
+    "conditions": {
+      "temperature_critical": 5,
+      "humidity_critical": 15,
+      "consecutive_readings": 3
+    }
+  },
+  "web_interface": {
+    "port": 80,
+    "enable_cors": true,
+    "cache_static_files": true,
+    "update_interval_ms": 2000
+  },
+  "advanced": {
+    "enable_deep_sleep": false,
+    "sleep_duration_minutes": 0,
+    "enable_ota_updates": false,
+    "enable_ntp": true,
+    "ntp_server": "pool.ntp.org"
+  }
+}
