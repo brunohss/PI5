@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintSense - Monitor Ambiental Profissional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00d9ff;
+            --secondary: #00ff88;
+            --accent: #ff3366;
+            --dark: #0a0e27;
+            --darker: #050817;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--darker);
+            color: #e0f7ff;
+            overflow-x: hidden;
+        }
+        
+        /* Background animado */
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(var(--primary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.03;
+        }
+        
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary);
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.8s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(0, 217, 255, 0.5);
+        }
+        
+        nav {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            color: #e0f7ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 1000px;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .hero .subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .hero .description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #0066ff);
+            color: var(--darker);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(0, 217, 255, 0.6);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0, 217, 255, 0.1);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        /* Section Title */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .feature-card {
+            background: rgba(15, 20, 45, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.3);
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .feature-card p {
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        /* Tech Specs */
+        .tech-specs {
+            background: rgba(15, 20, 45, 0.6);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+        
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .spec-item {
+            background: rgba(0, 217, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        .spec-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .spec-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e0f7ff;
+        }
+        
+        /* Materials Table */
+        .materials-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1rem;
+            margin: 2rem 0;
+        }
+        
+        .materials-table thead th {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 1.5rem;
+            text-align: left;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        .materials-table tbody tr {
+            background: rgba(15, 20, 45, 0.6);
+            transition: all 0.3s;
+        }
+        
+        .materials-table tbody tr:hover {
+            background: rgba(0, 217, 255, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .materials-table tbody td {
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+        
+        .materials-table tbody td:first-child {
+            font-weight: 700;
+            color: var(--secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05), rgba(0, 255, 136, 0.05));
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+        
+        .demo-preview {
+            max-width: 900px;
+            margin: 2rem auto;
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.4);
+        }
+        
+        .demo-preview img {
+            width: 100%;
+            display: block;
+        }
+        
+        .demo-mockup {
+            background: rgba(10, 14, 39, 0.9);
+            padding: 3rem;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: left;
+            max-width: 800px;
+            margin: 2rem auto;
+            border: 1px solid var(--primary);
+        }
+        
+        .demo-mockup pre {
+            color: var(--secondary);
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        /* Pricing Section */
+        .pricing-card {
+            background: rgba(15, 20, 45, 0.8);
+            border: 2px solid var(--primary);
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            animation: rotate 4s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .pricing-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+        }
+        
+        .price-label {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        
+        .features-list {
+            text-align: left;
+            margin: 2rem 0;
+        }
+        
+        .features-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            list-style: none;
+        }
+        
+        .features-list li::before {
+            content: '✓ ';
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(10, 14, 39, 0.95);
+            border-top: 2px solid var(--primary);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            opacity: 0.6;
+            margin-top: 2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                justify-content: center;
+            }
+            
+            .materials-table {
+                font-size: 0.9rem;
+            }
+            
+            .materials-table thead th,
+            .materials-table tbody td {
+                padding: 1rem;
+            }
+        }
+        
+        /* Scroll Animation */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-bg"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🖨️ PRINTSENSE</div>
+            <nav>
+                <a href="#features">Recursos</a>
+                <a href="#specs">Especificações</a>
+                <a href="#materials">Materiais</a>
+                <a href="#demo">Demo</a>
+                <a href="#pricing">Preço</a>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>PRINTSENSE</h1>
+            <p class="subtitle">Monitor Ambiental Profissional para Impressão 3D</p>
+            <p class="description">
+                Sistema completo de monitoramento em tempo real com sensores de alta precisão, 
+                display LCD 20x4, interface web profissional com gráficos Chart.js, 
+                controle via encoder rotativo e logging em SD Card.
+            </p>
+            <div class="cta-buttons">
+                <a href="#demo" class="btn btn-primary">
+                    <span>🚀 Ver Demonstração</span>
+                </a>
+                <a href="#specs" class="btn btn-secondary">
+                    <span>📊 Especificações</span>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="container">
+        <h2 class="section-title">Recursos Principais</h2>
+        <div class="features-grid">
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🌡️</span>
+                <h3>Monitoramento Completo</h3>
+                <p>
+                    <strong>4 sensores simultâneos:</strong><br>
+                    • DHT22 - Temperatura e Umidade<br>
+                    • LDR - Luminosidade ambiente<br>
+                    • MAX4466 - Nível de ruído<br>
+                    Leituras a cada 1 segundo com alta precisão
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">📺</span>
+                <h3>Display LCD 20x4</h3>
+                <p>
+                    <strong>Interface local intuitiva:</strong><br>
+                    • Valores em tempo real<br>
+                    • Faixas ideais por material<br>
+                    • Status colorido (OK/ATENÇÃO/CRÍTICO)<br>
+                    • Atualização a cada 1 segundo
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🎛️</span>
+                <h3>Encoder Rotativo EC11</h3>
+                <p>
+                    <strong>Controle físico:</strong><br>
+                    • Girar para navegar entre materiais<br>
+                    • Pressionar para confirmar<br>
+                    • Feedback visual no LCD<br>
+                    • Timeout automático de 10s
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🌐</span>
+                <h3>Interface Web PRO</h3>
+                <p>
+                    <strong>Dashboard profissional:</strong><br>
+                    • Design cyberpunk (cyan/verde neon)<br>
+                    • Tema da estufa inteligente<br>
+                    • Animações suaves<br>
+                    • Responsivo (mobile/desktop)
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">📊</span>
+                <h3>Gráficos Chart.js</h3>
+                <p>
+                    <strong>Histórico em tempo real:</strong><br>
+                    • 4 linhas simultâneas<br>
+                    • Últimos 30 pontos (~1 minuto)<br>
+                    • Interativo (hover, legendas clicáveis)<br>
+                    • Atualização automática a cada 2s
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">💾</span>
+                <h3>Logging em SD Card</h3>
+                <p>
+                    <strong>Armazenamento robusto:</strong><br>
+                    • Modo SDMMC (4x mais rápido)<br>
+                    • Logs CSV por data<br>
+                    • Download via web<br>
+                    • Histórico ilimitado
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">📡</span>
+                <h3>WiFi Dual Mode</h3>
+                <p>
+                    <strong>Conectividade flexível:</strong><br>
+                    • Modo AP (Access Point)<br>
+                    • Modo Station (conectar à rede)<br>
+                    • Fallback automático<br>
+                    • Configuração via web
+                </p>
+            </div>
+            
+            <div class="feature-card scroll-animate">
+                <span class="feature-icon">🎯</span>
+                <h3>4 Perfis de Material</h3>
+                <p>
+                    <strong>Faixas ideais calibradas:</strong><br>
+                    • PLA: 18-28°C, 40-60%<br>
+                    • PETG: 20-30°C, 30-50%<br>
+                    • ABS: 22-32°C, 20-40%<br>
+                    • RESINA: 20-25°C, 40-60%
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tech Specs -->
+    <section id="specs" class="container">
+        <div class="tech-specs scroll-animate">
+            <h2 class="section-title">Especificações Técnicas</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Microcontrolador</div>
+                    <div class="spec-value">ESP32-S3 WROOM1</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Sensor Temp/Umid</div>
+                    <div class="spec-value">DHT22 (GPIO 17)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Sensor Luz</div>
+                    <div class="spec-value">LDR (GPIO 4)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Sensor Som</div>
+                    <div class="spec-value">MAX4466 (GPIO 8)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Display</div>
+                    <div class="spec-value">LCD I2C 20x4 (0x27)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">I2C Pinos</div>
+                    <div class="spec-value">SDA: 10, SCL: 13</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Encoder</div>
+                    <div class="spec-value">EC11 5-pin (GPIO 5,6,7)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">SD Card</div>
+                    <div class="spec-value">SDMMC 1-bit (39,38,40)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">WiFi</div>
+                    <div class="spec-value">802.11 b/g/n</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Alimentação</div>
+                    <div class="spec-value">5V USB-C</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Consumo</div>
+                    <div class="spec-value">~300mA típico</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Taxa de Atualização</div>
+                    <div class="spec-value">1Hz sensores / 0.5Hz web</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Materials Comparison -->
+    <section id="materials" class="container">
+        <h2 class="section-title">Condições Ideais por Material</h2>
+        <div class="scroll-animate">
+            <table class="materials-table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Temperatura</th>
+                        <th>Umidade</th>
+                        <th>Luz Máxima</th>
+                        <th>Ruído Máximo</th>
+                        <th>Aplicações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PLA</td>
+                        <td>18°C - 28°C</td>
+                        <td>40% - 60%</td>
+                        <td>3000 lux</td>
+                        <td>2000</td>
+                        <td>Geral, protótipos, modelos</td>
+                    </tr>
+                    <tr>
+                        <td>PETG</td>
+                        <td>20°C - 30°C</td>
+                        <td>30% - 50%</td>
+                        <td>3000 lux</td>
+                        <td>2000</td>
+                        <td>Peças mecânicas, durabilidade</td>
+                    </tr>
+                    <tr>
+                        <td>ABS</td>
+                        <td>22°C - 32°C</td>
+                        <td>20% - 40%</td>
+                        <td>3000 lux</td>
+                        <td>2000</td>
+                        <td>Industrial, alta temperatura</td>
+                    </tr>
+                    <tr>
+                        <td>RESINA</td>
+                        <td>20°C - 25°C</td>
+                        <td>40% - 60%</td>
+                        <td>1000 lux</td>
+                        <td>1500</td>
+                        <td>Alta precisão, miniaturas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    
+    <!-- Demo Section -->
+    <section id="demo" class="container">
+        <div class="demo-section scroll-animate">
+            <h2 class="section-title">Interface em Ação</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                Dashboard web profissional com tema cyberpunk e gráficos em tempo real
+            </p>
+            
+            <div class="demo-mockup">
+                <pre>
+╔════════════════════════════════════════╗
+║  🖨️ PRINTSENSE       ● ONLINE         ║
+╠════════════════════════════════════════╣
+║  🎯 MATERIAL: PLA                      ║
+╠════════════════════════════════════════╣
+║         <span style="color: #00ff88">IDEAL</span> para PLA                 ║
+║    Condições perfeitas detectadas      ║
+╠════════════════════════════════════════╣
+║ ┌─────────┐ ┌─────────┐ ┌─────────┐  ║
+║ │  🌡️    │ │  💧    │ │  💡     │  ║
+║ │<span style="color: #00d9ff">25.3°C</span>  │ │<span style="color: #00d9ff">76.0%</span>  │ │ <span style="color: #00d9ff">1770</span>   │  ║
+║ │18-28°C  │ │40-60%  │ │<3000 lux│  ║
+║ │ <span style="color: #00ff88">[OK]</span>   │ │ <span style="color: #00ff88">[OK]</span>   │ │  <span style="color: #00ff88">[OK]</span>   │  ║
+║ └─────────┘ └─────────┘ └─────────┘  ║
+║ ┌─────────┐                            ║
+║ │  🔊     │  📊 HISTÓRICO EM TEMPO    ║
+║ │ <span style="color: #00d9ff">1974</span>   │     REAL                   ║
+║ │ < 2000  │  ━ Temp  ━ Umid           ║
+║ │ <span style="color: #00ff88">[OK]</span>    │  ━ Luz   ━ Som            ║
+║ └─────────┘                            ║
+║  [Gráfico Chart.js com 4 linhas]      ║
+╠════════════════════════════════════════╣
+║  [📁 Ver Logs] [⬇️ Download Hoje]    ║
+╠════════════════════════════════════════╣
+║  Última atualização: 22:45:30          ║
+╚════════════════════════════════════════╝
+</pre>
+            </div>
+            
+            <div style="margin-top: 3rem;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem;">Display LCD 20x4</h3>
+                <div class="demo-mockup">
+                    <pre>
+┌────────────────────┐
+│PLA * IDEAL         │ ← Material e status
+│T:25.3°C   18-28°C  │ ← Temp atual + faixa
+│H:76.0%    40-60%   │ ← Umid atual + faixa
+│Luz:1770  Som:1974  │ ← Luz e Som
+└────────────────────┘
+
+<span style="color: #00ff88">Girar Encoder</span> → Mudar material
+<span style="color: #00d9ff">Pressionar</span> → Confirmar seleção
+</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing -->
+    <section id="pricing" class="container">
+        <h2 class="section-title">Custo do Projeto</h2>
+        <div class="pricing-card scroll-animate">
+            <div class="pricing-content">
+                <div class="price">R$ 180</div>
+                <div class="price-label">Custo Total de Componentes</div>
+                
+                <ul class="features-list">
+                    <li>ESP32-S3 WROOM1 com SD Card</li>
+                    <li>DHT22 - Sensor temperatura/umidade</li>
+                    <li>LDR + Resistor 10kΩ</li>
+                    <li>MAX4466 - Microfone analógico</li>
+                    <li>LCD I2C 20x4 (endereço 0x27)</li>
+                    <li>Encoder Rotativo EC11 5-pinos</li>
+                    <li>SD Card 16GB Classe 10</li>
+                    <li>Cabos jumper e protoboard</li>
+                    <li>Fonte USB 5V 1A</li>
+                    <li>Case impresso 3D (opcional)</li>
+                </ul>
+                
+                <a href="#features" class="btn btn-primary" style="margin-top: 2rem;">
+                    <span>🚀 Começar Projeto</span>
+                </a>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem; opacity: 0.8;">
+            <p style="font-size: 1.1rem;">
+                <strong>Tempo de montagem:</strong> 4-6 horas<br>
+                <strong>Nível:</strong> Intermediário<br>
+                <strong>Ferramentas:</strong> Ferro de solda, multímetro, PC com Arduino IDE
+            </p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo" style="font-size: 2rem; margin-bottom: 2rem;">🖨️ PRINTSENSE</div>
+            
+            <div class="footer-links">
+                <a href="#features">Recursos</a>
+                <a href="#specs">Especificações</a>
+                <a href="#materials">Materiais</a>
+                <a href="#demo">Demo</a>
+                <a href="#pricing">Preço</a>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 PrintSense - Monitor Ambiental Profissional</p>
+                <p style="margin-top: 0.5rem;">
+                    Projeto Integrador | Desenvolvimento: Equipe PrintSense
+                </p>
+                <p style="margin-top: 1rem; font-size: 0.9rem;">
+                    🔧 Hardware | 💻 Software | 🎨 Interface | 📚 Documentação | 🎬 Apresentação
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Scroll Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Smooth scroll para links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
