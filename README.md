@@ -56,11 +56,11 @@
 │  Status: IDEAL                         │
 ├────────────────────────────────────────┤
 │  🌡️ 25.3°C   💧 76.0%                 │
-│  💡 1770 lux  🔊 1974                  │
+│  💡 1770 lux  🔊 1974                 │
 │                                        │
-│  📊 [Gráfico em tempo real]            │
+│  📊 [Gráfico em tempo real]           │
 │                                        │
-│  LEDs: 🟢 ON | 🟡 OFF | 🔴 OFF        │
+│  LEDs: 🟢 ON | 🟡 OFF | 🔴 OFF       │
 └────────────────────────────────────────┘
 ```
 
@@ -147,23 +147,23 @@
 ├─────────────────────────────────────────────────┤
 │                                                 │
 │  SENSORES:                                      │
-│  ├─ DHT22 (DATA)      → GPIO 17                │
-│  ├─ LDR (Analog)      → GPIO 4                 │
-│  └─ MAX4466 (Analog)  → GPIO 8                 │
+│  ├─ DHT22 (DATA)      → GPIO 17                 │
+│  ├─ LDR (Analog)      → GPIO 4                  │
+│  └─ MAX4466 (Analog)  → GPIO 8                  │
 │                                                 │
 │  DISPLAY LCD I2C (0x27):                        │
-│  ├─ SDA               → GPIO 10 (customizado)  │
-│  └─ SCL               → GPIO 13 (customizado)  │
+│  ├─ SDA               → GPIO 10 (customizado)   │
+│  └─ SCL               → GPIO 13 (customizado)   │
 │                                                 │
 │  ENCODER ROTATIVO EC11:                         │
-│  ├─ CLK (Canal A)     → GPIO 7                 │
-│  ├─ DT  (Canal B)     → GPIO 6                 │
-│  └─ SW  (Botão)       → GPIO 5                 │
+│  ├─ CLK (Canal A)     → GPIO 7                  │
+│  ├─ DT  (Canal B)     → GPIO 6                  │
+│  └─ SW  (Botão)       → GPIO 5                  │
 │                                                 │
 │  SD CARD SDMMC (1-bit mode):                    │
-│  ├─ CLK               → GPIO 39                │
-│  ├─ CMD               → GPIO 38                │
-│  └─ D0                → GPIO 40                │
+│  ├─ CLK               → GPIO 39                 │
+│  ├─ CMD               → GPIO 38                 │
+│  └─ D0                → GPIO 40                 │
 │                                                 │
 │  LEDs INDICADORES (Status Visual):              │
 │  ├─ LED VERDE 🟢      → GPIO 2  (IDEAL)        │
@@ -171,9 +171,9 @@
 │  └─ LED VERMELHO 🔴   → GPIO 16 (RUIM)         │
 │                                                 │
 │  ALIMENTAÇÃO:                                   │
-│  ├─ 5V                → USB-C                  │
-│  ├─ 3.3V              → Sensores               │
-│  └─ GND               → Comum                  │
+│  ├─ 5V                → USB-C                   │
+│  ├─ 3.3V              → Sensores                │
+│  └─ GND               → Comum                   │
 │                                                 │
 └─────────────────────────────────────────────────┘
 ```
@@ -485,11 +485,11 @@ Cenário 3: Temp Alta + Umid Baixa
     │                         │
     │   [LCD Display 20x4]    │
     │                         │
-    │   ┌─┐  ┌─┐  ┌─┐        │
-    │   │🟢│  │🟡│  │🔴│      │ ← LEDs frontais
-    │   └─┘  └─┘  └─┘        │
+    │   ┌───┐ ┌───┐  ┌───┐    │
+    │   │🟢│  │🟡│  │🔴│     │ ← LEDs frontais
+    │   └───┘ └───┘  └───┘    │
     │                         │
-    │   [Encoder]   [Sensors]│
+    │   [Encoder]   [Sensors] │
     └─────────────────────────┘
 ```
 
