@@ -8,12 +8,12 @@ let soundHistory = [];
 let timeLabels = [];
 const MAX_DATA_POINTS = 30;
 
-// Configurações de materiais
+// Configurações de materiais (ATUALIZADO COM dB)
 const materials = {
-  'PLA': { tempMin: 18, tempMax: 28, humMin: 40, humMax: 60, lightMax: 3000, soundMax: 2000 },
-  'PETG': { tempMin: 20, tempMax: 30, humMin: 30, humMax: 50, lightMax: 3000, soundMax: 2000 },
-  'ABS': { tempMin: 22, tempMax: 32, humMin: 20, humMax: 40, lightMax: 3000, soundMax: 2000 },
-  'RESINA': { tempMin: 20, tempMax: 25, humMin: 40, humMax: 60, lightMax: 1000, soundMax: 1500 }
+  'PLA': { tempMin: 18, tempMax: 28, humMin: 40, humMax: 60, lightMax: 3000, soundMaxDB: 70 },
+  'PETG': { tempMin: 20, tempMax: 30, humMin: 30, humMax: 50, lightMax: 3000, soundMaxDB: 70 },
+  'ABS': { tempMin: 22, tempMax: 32, humMin: 20, humMax: 40, lightMax: 3000, soundMaxDB: 70 },
+  'RESINA': { tempMin: 20, tempMax: 25, humMin: 40, humMax: 60, lightMax: 1000, soundMaxDB: 65 }
 };
 
 // ========== INICIALIZAÇÃO DO GRÁFICO ==========
@@ -58,7 +58,7 @@ function initChart() {
           hidden: true
         },
         {
-          label: 'Som/10',
+          label: 'Som (dB)',
           data: soundHistory,
           borderColor: '#ff3366',
           backgroundColor: 'rgba(255, 51, 102, 0.1)',
@@ -173,10 +173,13 @@ function initChart() {
               family: 'JetBrains Mono',
               size: 11
             },
-            callback: function(value) {
-              return value * 10;
+            callback: function(value, index, values) {
+              // Luz está dividida por 10, Som em dB direto
+              return value;
             }
-          }
+          },
+          min: 0,
+          max: 500
         }
       },
       animation: {
@@ -192,21 +195,22 @@ function updateData() {
   fetch('/api/data')
     .then(response => response.json())
     .then(data => {
-      // Atualizar valores
+      // Atualizar valores (SOUND AGORA EM dB!)
       const tempValue = !isNaN(data.temperature) ? data.temperature.toFixed(1) + '°C' : '--';
       const humValue = !isNaN(data.humidity) ? data.humidity.toFixed(1) + '%' : '--';
+      const soundValue = !isNaN(data.soundDB) ? data.soundDB.toFixed(0) + ' dB' : '--';
       
       document.getElementById('temperature').textContent = tempValue;
       document.getElementById('humidity').textContent = humValue;
       document.getElementById('light').textContent = data.light;
-      document.getElementById('sound').textContent = data.sound;
+      document.getElementById('sound').textContent = soundValue;
       
       // Atualizar faixas ideais
       const mat = materials[data.material] || materials['PLA'];
       document.getElementById('tempRange').textContent = `Ideal: ${mat.tempMin}-${mat.tempMax}°C`;
       document.getElementById('humRange').textContent = `Ideal: ${mat.humMin}-${mat.humMax}%`;
       document.getElementById('lightRange').textContent = `< ${mat.lightMax} lux`;
-      document.getElementById('soundRange').textContent = `< ${mat.soundMax}`;
+      document.getElementById('soundRange').textContent = `< ${mat.soundMaxDB} dB`;
       
       // Atualizar status
       document.getElementById('statusTitle').textContent = data.status + ' para ' + data.material;
@@ -283,13 +287,13 @@ function updateSensorBadges(data, mat) {
     }
   }
   
-  // Som
+  // Som (ATUALIZADO PARA dB)
   const soundBadge = document.getElementById('soundBadge');
   if (soundBadge) {
-    if (data.sound <= mat.soundMax) {
+    if (data.soundDB <= mat.soundMaxDB) {
       soundBadge.textContent = 'OK';
       soundBadge.className = 'metric-badge ok';
-    } else if (data.sound <= mat.soundMax * 1.2) {
+    } else if (data.soundDB <= mat.soundMaxDB + 5) {
       soundBadge.textContent = 'ALTO';
       soundBadge.className = 'metric-badge warning';
     } else {
@@ -325,7 +329,7 @@ function updateChart(data) {
   tempHistory.push(data.temperature);
   humHistory.push(data.humidity);
   lightHistory.push(data.light / 10); // Dividir por 10 para escala
-  soundHistory.push(data.sound / 10); // Dividir por 10 para escala
+  soundHistory.push(data.soundDB); // SOM EM dB (não dividir!)
   
   // Manter apenas últimos pontos
   if (timeLabels.length > MAX_DATA_POINTS) {
