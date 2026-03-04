@@ -67,11 +67,8 @@
 
 // ==================== CONFIGURAÇÕES WiFi ====================
 
-//const char* ssid     = "VIVOFIBRA-BAF2";
-//const char* password = "3dd920baf2";
-
-const char* ssid     = "ClaroVirtua170_2G";
-const char* password = "48608741";
+const char* ssid     = "ssid";
+const char* password = "password";
 
 // ==================== PINOS - SENSORES ====================
 #define DHTPIN 17
