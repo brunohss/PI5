@@ -1,3 +1,15 @@
+function getApiBase() {
+  const host = window.location.hostname;
+
+  if (host === "localhost" || host === "127.0.0.1") {
+    return "http://localhost:8080";
+  }
+
+  return "";
+}
+
+const API_BASE = getApiBase();
+
 // PrintSense - Dashboard Pro com Gráficos
 let currentMaterial = 'PLA';
 let historyChart = null;
@@ -192,7 +204,7 @@ function initChart() {
 
 // ========== ATUALIZAÇÃO DE DADOS ==========
 function updateData() {
-  fetch('/api/data')
+  fetch(API_BASE + "/api/data")
     .then(response => response.json())
     .then(data => {
       // Atualizar valores (SOUND AGORA EM dB!)
@@ -350,33 +362,25 @@ function changeMaterial() {
   
   const material = selectElement.value;
   
-  fetch('/api/material', {
+  fetch(API_BASE + '/api/material', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/json'
     },
-    body: 'material=' + encodeURIComponent(material)
+    body: JSON.stringify({ material })
   })
   .then(response => response.json())
   .then(data => {
-    if (data.success) {
-      currentMaterial = material;
-      console.log('Material alterado para:', material);
-      updateData();
-      showNotification('Material alterado para ' + material, 'success');
-    } else {
-      showNotification('Erro ao alterar material', 'error');
-    }
+    console.log("Material alterado:", data);
   })
   .catch(error => {
-    console.error('Erro na requisição:', error);
-    showNotification('Erro de conexão', 'error');
+    console.error("Erro na requisição:", error);
   });
 }
 
 // ========== FUNÇÕES DE LOGS ==========
 function showLogs() {
-  fetch('/api/logs')
+  fetch(API_BASE + '/api/logs')
     .then(response => response.json())
     .then(data => {
       if (data.logs && data.logs.length > 0) {
