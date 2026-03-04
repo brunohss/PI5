@@ -1,862 +1,530 @@
-# 🖨️ PrintSense - Monitor Ambiental Profissional para Impressão 3D
+# 🖨️ PrintSense - Sistema IoT de Monitoramento para Impressoras 3D
 
 <div align="center">
 
-![PrintSense Logo](https://img.shields.io/badge/PrintSense-v1.0-00d9ff?style=for-the-badge&logo=3d-printing)
-[![License](https://img.shields.io/badge/License-MIT-00ff88?style=for-the-badge)](LICENSE)
-[![ESP32](https://img.shields.io/badge/ESP32--S3-WROOM1-ff3366?style=for-the-badge&logo=espressif)](https://www.espressif.com/)
-[![Status](https://img.shields.io/badge/Status-Active-00ff88?style=for-the-badge)](https://github.com)
+![PrintSense Logo](https://img.shields.io/badge/PrintSense-IoT%20Monitoring-667eea?style=for-the-badge)
+![ESP32](https://img.shields.io/badge/ESP32--S3-Powered-orange?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**Sistema completo de monitoramento em tempo real para ambientes de impressão 3D**
+**Sistema inteligente de monitoramento ambiental para otimização de impressão 3D**
 
-[Características](#-características) • [Hardware](#-hardware-necessário) • [Instalação](#-instalação) • [Uso](#-uso) • [API](#-api-rest) • [Contribuir](#-contribuindo)
+[📖 Documentação](#-documentação) • [🚀 Quick Start](#-quick-start) • [🎯 Funcionalidades](#-funcionalidades) • [🛠️ Desenvolvimento](#️-desenvolvimento)
 
 </div>
 
 ---
 
-## 📋 Índice
+## 📋 Sobre o Projeto
 
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Características](#-características)
-- [Hardware Necessário](#-hardware-necessário)
-- [Pinout](#-pinout)
-- [Instalação](#-instalação)
-- [Configuração](#-configuração)
-- [Interface Web](#-interface-web)
-- [Display LCD](#-display-lcd)
-- [LEDs Indicadores](#-leds-indicadores)
-- [API REST](#-api-rest)
-- [Estrutura de Arquivos](#-estrutura-de-arquivos)
-- [Troubleshooting](#-troubleshooting)
-- [Roadmap](#-roadmap)
-- [Contribuindo](#-contribuindo)
-- [Licença](#-licença)
+O **PrintSense** é um sistema IoT completo que monitora condições ambientais (temperatura, umidade, luminosidade e ruído) em tempo real para otimizar a qualidade de impressões 3D. Desenvolvido como Projeto Integrador do curso de Engenharia de Computação da UNIVESP.
 
----
+### 🎯 Problema Resolvido
 
-## 🎯 Sobre o Projeto
+Impressões 3D falham frequentemente devido a condições ambientais inadequadas:
+- 🔥 **Temperatura alta** → Warping e delaminação
+- 💧 **Umidade elevada** → Absorção de água no filamento
+- ☀️ **Luz excessiva** → Degradação de resinas fotossensíveis
+- 📢 **Vibrações/ruído** → Imperfeições na superfície
 
-**PrintSense** é um sistema de monitoramento ambiental profissional desenvolvido especificamente para ambientes de impressão 3D. Monitora temperatura, umidade, luminosidade e ruído em tempo real, com interface web moderna, display LCD local e **indicadores LED visuais**.
+### ✅ Solução
 
-### Por Que PrintSense?
-
-- ✅ Diferentes materiais (PLA, PETG, ABS, Resina) requerem condições específicas
-- ✅ Umidade afeta a qualidade de impressão
-- ✅ Temperatura influencia a adesão e deformação
-- ✅ Resina fotopolimérica é sensível à luz
-- ✅ Controle ambiental = Impressões de qualidade
-
-### Demonstração Visual
-
-```
-┌────────────────────────────────────────┐
-│  🖨️ PRINTSENSE       ● ONLINE   🟢    │
-│  Material: PLA                         │
-│  Status: IDEAL                         │
-├────────────────────────────────────────┤
-│  🌡️ 25.3°C   💧 76.0%                 │
-│  💡 1770 lux  🔊 1974                 │
-│                                        │
-│  📊 [Gráfico em tempo real]           │
-│                                        │
-│  LEDs: 🟢 ON | 🟡 OFF | 🔴 OFF       │
-└────────────────────────────────────────┘
-```
+Sistema de monitoramento em tempo real que:
+- Detecta condições inadequadas **antes** da falha
+- Alerta via LEDs (🟢 IDEAL, 🟡 BOM, 🔴 RUIM)
+- Registra dados históricos em SD Card
+- Permite análise e otimização de processos
+- Interface web para visualização e controle
 
 ---
 
-## ✨ Características
+## 🎯 Funcionalidades
 
-### 🌡️ Monitoramento Completo
-- **DHT22** - Temperatura e umidade com precisão ±0.5°C / ±2%
-- **LDR** - Sensor de luminosidade ambiente (0-4095 ADC)
-- **MAX4466** - Medidor de nível de ruído
-- Leituras a cada 1 segundo
+### 🔧 Hardware
+- ✅ **4 Sensores Integrados:**
+  - DHT22 (Temperatura e Umidade)
+  - LDR (Luminosidade)
+  - MAX4466 (Som/Vibração com conversão dB SPL)
+  - Sistema de LEDs indicadores
+- ✅ **Display LCD I2C 20x4** - Visualização local
+- ✅ **Encoder Rotativo EC11** - Navegação e seleção de material
+- ✅ **SD Card** - Armazenamento de logs (CSV)
+- ✅ **WiFi** - Interface web e API REST
 
-### 📺 Interface Quádrupla
-1. **LCD 20x4 Local** - Visualização em tempo real sem internet
-2. **Dashboard Web PRO** - Tema cyberpunk com gráficos Chart.js
-3. **LEDs Indicadores** - Status visual (🟢 Verde / 🟡 Amarelo / 🔴 Vermelho)
-4. **API REST** - Integração com outros sistemas
+### 💻 Software
+- ✅ **Firmware ESP32** em C++ (Arduino)
+- ✅ **Interface Web Responsiva** (HTML5 + CSS3 + JavaScript ES6)
+- ✅ **Gráficos em Tempo Real** (Chart.js)
+- ✅ **API REST Completa** (GET/POST)
+- ✅ **Sistema de Logs** estruturado
+- ✅ **Calibração de Sensores** ajustável
+- ✅ **Thresholds Customizados** por material
 
-### 🎛️ Controle Físico
-- **Encoder Rotativo EC11** - Navegação entre materiais
-- Girar para selecionar | Pressionar para confirmar
-- Feedback visual imediato no LCD e LEDs
-
-### 📊 Gráficos em Tempo Real
-- **Chart.js** - 4 linhas simultâneas (Temp/Umid/Luz/Som)
-- Histórico de 30 pontos (~1 minuto)
-- Interativo: hover, zoom, legendas clicáveis
-
-### 💾 Logging Robusto
-- **SD Card SDMMC** - 4x mais rápido que SPI (~20 MB/s)
-- Logs CSV organizados por data
-- Download via interface web
-- Histórico ilimitado
-
-### 🌐 Conectividade
-- **WiFi Dual Mode** - AP (Access Point) ou Station
-- Fallback automático
-- API REST completa
-
-### 🎯 4 Perfis de Material
-| Material | Temperatura | Umidade | Luz | Som | Características |
-|----------|-------------|---------|-----|-----|-----------------|
-| **PLA** | 18-28°C | 40-60% | < 3000 | < 2000 | Fácil, versátil |
-| **PETG** | 20-30°C | 30-50% | < 3000 | < 2000 | Resistente, flexível |
-| **ABS** | 22-32°C | 20-40% | < 3000 | < 2000 | Industrial, durável |
-| **RESINA** | 20-25°C | 40-60% | < 1000 | < 1500 | Precisão, detalhes |
+### 📊 Materiais Suportados
+- **PLA** (Temp: 18-28°C, Umid: 40-60%)
+- **PETG** (Temp: 20-30°C, Umid: 30-50%)
+- **ABS** (Temp: 22-32°C, Umid: 20-40%)
+- **RESINA** (Temp: 20-25°C, Umid: 40-60%, Luz: <1000)
 
 ---
 
-## 🔧 Hardware Necessário
+## 🚀 Quick Start
 
-### Componentes Principais
+### 📋 Pré-requisitos
 
-| Componente | Especificação | Preço | Onde Comprar |
-|------------|---------------|-------|--------------|
-| ESP32-S3 WROOM1 | Com SD Card integrado | R$ 45 | [AliExpress](https://aliexpress.com) |
-| DHT22 | Sensor temp/umidade | R$ 15 | [Mercado Livre](https://mercadolivre.com.br) |
-| LDR 5mm | Fotoresistor | R$ 2 | Loja local |
-| MAX4466 | Módulo microfone | R$ 8 | [AliExpress](https://aliexpress.com) |
-| LCD I2C 20x4 | Endereço 0x27 | R$ 25 | [Mercado Livre](https://mercadolivre.com.br) |
-| Encoder EC11 | 5 terminais com botão | R$ 5 | [AliExpress](https://aliexpress.com) |
-| **LED Verde** 🟢 | 5mm alto brilho | R$ 0,50 | Loja local |
-| **LED Amarelo** 🟡 | 5mm alto brilho | R$ 0,50 | Loja local |
-| **LED Vermelho** 🔴 | 5mm alto brilho | R$ 0,50 | Loja local |
-| **Resistores LED** | 3x 220Ω | R$ 0,30 | Loja local |
-| Resistor 10kΩ | Para LDR | R$ 0,10 | Loja local |
-| SD Card | 16GB Classe 10 | R$ 20 | Qualquer |
-| Protoboard | 830 pontos | R$ 10 | Loja local |
-| Jumpers | 40 unidades M-M/M-F | R$ 8 | Loja local |
-| Fonte USB | 5V 1A mínimo | R$ 10 | Qualquer |
+- **Hardware:** ESP32-S3, sensores (ver lista completa abaixo)
+- **Software:** 
+  - Arduino IDE 2.x ou superior
+  - Python 3.8+ (para desenvolvimento)
+  - Git
 
-**💰 Custo Total: ~R$ 150**
+### 🔌 Hardware Necessário
 
----
+| Componente | Quantidade | Função |
+|------------|------------|--------|
+| ESP32-S3 DevKit | 1 | Microcontrolador principal |
+| DHT22 | 1 | Sensor de temperatura e umidade |
+| LDR 5mm | 1 | Sensor de luminosidade |
+| MAX4466 | 1 | Sensor de som (microfone eletreto) |
+| LCD I2C 20x4 | 1 | Display local |
+| Encoder EC11 | 1 | Entrada rotativa + botão |
+| SD Card Module | 1 | Armazenamento de logs |
+| LEDs 5mm | 3 | Verde, Amarelo, Vermelho |
+| Resistores | 6 | 220Ω (3x LEDs), 10kΩ (3x pull-up) |
+| Protoboard + Jumpers | 1 kit | Montagem |
 
-## 📌 Pinout
+### 📥 Instalação (Hardware Real)
 
-### Diagrama Completo
-
-```
-┌─────────────────────────────────────────────────┐
-│              ESP32-S3 WROOM1                    │
-├─────────────────────────────────────────────────┤
-│                                                 │
-│  SENSORES:                                      │
-│  ├─ DHT22 (DATA)      → GPIO 17                 │
-│  ├─ LDR (Analog)      → GPIO 4                  │
-│  └─ MAX4466 (Analog)  → GPIO 8                  │
-│                                                 │
-│  DISPLAY LCD I2C (0x27):                        │
-│  ├─ SDA               → GPIO 10 (customizado)   │
-│  └─ SCL               → GPIO 13 (customizado)   │
-│                                                 │
-│  ENCODER ROTATIVO EC11:                         │
-│  ├─ CLK (Canal A)     → GPIO 7                  │
-│  ├─ DT  (Canal B)     → GPIO 6                  │
-│  └─ SW  (Botão)       → GPIO 5                  │
-│                                                 │
-│  SD CARD SDMMC (1-bit mode):                    │
-│  ├─ CLK               → GPIO 39                 │
-│  ├─ CMD               → GPIO 38                 │
-│  └─ D0                → GPIO 40                 │
-│                                                 │
-│  LEDs INDICADORES (Status Visual):              │
-│  ├─ LED VERDE 🟢      → GPIO 2  (IDEAL)        │
-│  ├─ LED AMARELO 🟡    → GPIO 15 (BOM)          │
-│  └─ LED VERMELHO 🔴   → GPIO 16 (RUIM)         │
-│                                                 │
-│  ALIMENTAÇÃO:                                   │
-│  ├─ 5V                → USB-C                   │
-│  ├─ 3.3V              → Sensores                │
-│  └─ GND               → Comum                   │
-│                                                 │
-└─────────────────────────────────────────────────┘
+#### 1. Clone o repositório
+```bash
+git clone https://github.com/brunohss/PI5.git
+cd PI5
 ```
 
-### Conexões dos LEDs
-
+#### 2. Configure Arduino IDE
 ```
-     ESP32-S3
-        │
-   ┌────┴────┬─────┐
-   │         │     │
-  GPIO2   GPIO15  GPIO16
-   │         │     │
-  [R]       [R]   [R]  ← Resistores 220Ω
-  220Ω     220Ω  220Ω
-   │         │     │
-  LED      LED   LED
-  🟢       🟡    🔴
-  Verde   Amar  Verm
-   │         │     │
-   └─────────┴─────┴──→ GND
+1. Instalar ESP32 Board Support:
+   - File → Preferences
+   - Additional Board Manager URLs: 
+     https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+   - Tools → Board → Boards Manager → Instalar "esp32"
 
-Comportamento:
-- Apenas 1 LED aceso por vez
-- Verde = IDEAL (todas condições OK)
-- Amarelo = BOM (1 condição fora)
-- Vermelho = RUIM (2+ condições fora)
+2. Selecionar placa:
+   - Tools → Board → ESP32 Arduino → ESP32S3 Dev Module
+
+3. Instalar bibliotecas:
+   - Sketch → Include Library → Manage Libraries
+   - Instalar: DHT sensor library, Adafruit Unified Sensor, LiquidCrystal I2C
 ```
 
-### Circuito do LDR
-
+#### 3. Preparar SD Card
+```bash
+# Formatar SD Card como FAT32
+# Criar estrutura de pastas:
+/
+├── web/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+└── logs/
 ```
-     3.3V
-      │
-     [R] 10kΩ
-      │
-      ├────→ GPIO 4 (ADC)
-      │
-     [LDR] Fotoresistor
-      │
-     GND
 
-Funcionamento:
-☀️ Muita luz  → LDR baixa resistência → ADC lê BAIXO
-🌙 Pouca luz → LDR alta resistência  → ADC lê ALTO
+#### 4. Upload Web Interface
+```bash
+# Copiar arquivos da pasta 'web/' do repositório para SD Card
+cp -r web/* /path/to/sdcard/web/
+```
+
+#### 5. Configurar WiFi
+```cpp
+// No arquivo firmware/PrintSense.ino
+const char* ssid = "SEU_WIFI_AQUI";
+const char* password = "SUA_SENHA_AQUI";
+```
+
+#### 6. Upload do Firmware
+```
+1. Conectar ESP32 via USB
+2. Arduino IDE → Sketch → Upload
+3. Aguardar compilação e upload
+4. Abrir Serial Monitor (115200 baud)
+5. Verificar IP atribuído
+6. Acessar: http://IP_DO_ESP32
 ```
 
 ---
 
-## 🚀 Instalação
+## 🧪 Desenvolvimento (Emulador)
 
-### 1️⃣ Requisitos
+Para desenvolver a interface **SEM precisar do hardware físico**, use nosso emulador completo!
 
-- **Arduino IDE** 2.0+ ou **PlatformIO**
-- **Placa ESP32** instalada no board manager
-- **Bibliotecas necessárias:**
-  ```
-  ✓ DHT sensor library (Adafruit)
-  ✓ Adafruit Unified Sensor
-  ✓ LiquidCrystal I2C (Frank de Brabander)
-  ✓ ArduinoJson (v6.21+)
-  ```
+### 🎮 Iniciar Emulador
 
-### 2️⃣ Clonar Repositório
+#### Passo 1: Clone o repositório (se ainda não fez)
+```bash
+git clone https://github.com/brunohss/PI5.git
+cd PI5
+```
+
+#### Passo 2: Iniciar servidor de emulação (backend)
+```bash
+# Terminal 1 - Raiz do projeto
+python emulator_server.py
+
+# Saída esperada:
+# ✅ Servidor rodando em: http://localhost:8080
+# 📡 API disponível em: http://localhost:8080/api/data
+```
+
+#### Passo 3: Iniciar servidor web (frontend)
+```bash
+# Terminal 2 - Entrar na pasta web
+cd web
+python -m http.server 5500
+
+# Saída esperada:
+# Serving HTTP on :: port 5500 (http://[::]:5500/) ...
+```
+
+#### Passo 4: Acessar interface
+```
+Abrir navegador em: http://localhost:5500
+```
+
+### 🎛️ Usando o Emulador
+
+O emulador permite:
+- ✅ Simular todos os sensores (temperatura, umidade, luz, som)
+- ✅ Testar diferentes materiais (PLA, PETG, ABS, RESINA)
+- ✅ Ver LEDs reagindo em tempo real
+- ✅ Testar cenários pré-definidos (quente, úmido, ruidoso, etc.)
+- ✅ Desenvolver frontend sem ESP32 físico
+- ✅ Criar novas páginas (configuração, calibração, histórico)
+
+### 📊 APIs Disponíveis (Emulador)
 
 ```bash
-git clone https://github.com/seu-usuario/printsense.git
-cd printsense
+# Obter dados dos sensores
+curl http://localhost:8080/api/data
+
+# Mudar material
+curl -X POST http://localhost:8080/api/material -d "material=ABS"
+
+# Simular valores customizados
+curl -X POST http://localhost:8080/api/simulate \
+  -H "Content-Type: application/json" \
+  -d '{"temperature": 30, "humidity": 70}'
+
+# Obter configurações
+curl http://localhost:8080/api/config
+
+# Listar logs
+curl http://localhost:8080/api/logs
 ```
 
-### 3️⃣ Instalar Bibliotecas
-
-#### Arduino IDE:
-```
-Sketch → Include Library → Manage Libraries
-
-Buscar e instalar:
-✓ DHT sensor library (Adafruit)
-✓ Adafruit Unified Sensor
-✓ LiquidCrystal I2C
-✓ ArduinoJson (v6.21+)
-```
-
-#### PlatformIO:
-```ini
-[env:esp32-s3-devkitc-1]
-platform = espressif32
-board = esp32-s3-devkitc-1
-framework = arduino
-
-lib_deps =
-    adafruit/DHT sensor library@^1.4.4
-    adafruit/Adafruit Unified Sensor@^1.1.9
-    marcoschwartz/LiquidCrystal_I2C@^1.1.4
-    bblanchon/ArduinoJson@^6.21.3
-```
-
-### 4️⃣ Montar Hardware
-
-#### a) Conectar Sensores
-```
-DHT22:
-├─ VCC → 3.3V
-├─ DATA → GPIO 17 (+ resistor 4.7kΩ pull-up)
-└─ GND → GND
-
-LDR:
-├─ Terminal 1 → 3.3V (via resistor 10kΩ)
-├─ Terminal 2 → GPIO 4 + GND
-```
-
-#### b) Conectar Display LCD
-```
-LCD I2C:
-├─ VCC → 5V
-├─ GND → GND
-├─ SDA → GPIO 10
-└─ SCL → GPIO 13
-```
-
-#### c) Conectar LEDs 🟢🟡🔴
-```
-LED Verde (IDEAL):
-GPIO 2 → [220Ω] → LED (+) → LED (-) → GND
-
-LED Amarelo (BOM):
-GPIO 15 → [220Ω] → LED (+) → LED (-) → GND
-
-LED Vermelho (RUIM):
-GPIO 16 → [220Ω] → LED (+) → LED (-) → GND
-
-IMPORTANTE: Perna LONGA do LED = Anodo (+)
-            Perna CURTA do LED = Catodo (-)
-```
-
-#### d) Conectar Encoder
-```
-Encoder EC11:
-├─ Pino 1 (GND) → GND
-├─ Pino 2 (CLK) → GPIO 7
-├─ Pino 3 (SW)  → GPIO 5
-├─ Pino 4 (DT)  → GPIO 6
-└─ Pino 5 (GND) → GND
-```
-
-### 5️⃣ Configurar WiFi
-
-Edite `PrintSense_LCD_I2C_FIXED.ino`:
-
-```cpp
-// WiFi - Modo Station (conectar à rede)
-const char* ssid = "SUA_REDE";         // ← Altere aqui
-const char* password = "SUA_SENHA";    // ← Altere aqui
-```
-
-### 6️⃣ Preparar SD Card
-
-1. **Formatar** em FAT32
-2. **Criar estrutura:**
-   ```
-   /logs/
-   /jobs/
-   /web/
-       ├── index.html
-       └── script.js
-   ```
-
-3. **Copiar arquivos web:**
-   ```bash
-   cp web/index_pro.html [SD_CARD]/web/index.html
-   cp web/script_pro.js [SD_CARD]/web/script.js
-   ```
-
-### 7️⃣ Fazer Upload
-
-1. Conectar ESP32 via USB
-2. Selecionar placa: **ESP32S3 Dev Module**
-3. Selecionar porta COM
-4. Clicar **Upload** (Ctrl+U)
-
-### 8️⃣ Verificar Funcionamento
-
-Abrir **Serial Monitor** (115200 baud):
+### 🔧 Estrutura do Emulador
 
 ```
-=================================
-PrintSense - Iniciando...
-=================================
+PI5/
+├── emulator_server.py        ← Servidor backend (porta 8080)
+├── web/                       ← Frontend (porta 5500)
+│   ├── index.html            ← Dashboard principal
+│   ├── style.css             ← Estilos
+│   └── script.js             ← Lógica do frontend
+└── firmware/                  ← Código ESP32
+    └── PrintSense.ino
+```
 
-[1/6] Inicializando LCD...
-✅ LCD inicializado (I2C: SDA=10, SCL=13)
+### 💡 Workflow de Desenvolvimento
 
-[2/6] Configurando Encoder...
-✅ Encoder configurado (GPIO 5,6,7)
-
-[3/6] Inicializando DHT22...
-✅ DHT22 OK! Temp: 24.5°C
-
-[4/6] Configurando LEDs...
-✅ LEDs configurados
-   Verde (IDEAL): GPIO 2
-   Amarelo (BOM): GPIO 15
-   Vermelho (RUIM): GPIO 16
-   [Teste visual: 🟢→🟡→🔴]
-
-[5/6] Inicializando SD Card (SDMMC)...
-✅ SD Card OK!
-   Nome: SD16G
-   Capacidade: 14.83 GB
-
-[6/6] Configurando WiFi...
-✅ WiFi conectado!
-   IP: 192.168.1.100
-
-✅ WebServer iniciado!
-Acesse: http://192.168.1.100
-
-Status atual: IDEAL
-LED Verde: ON 🟢
+```
+┌──────────────────────────────────────────────┐
+│  DESENVOLVENDO COM EMULADOR                  │
+├──────────────────────────────────────────────┤
+│                                              │
+│  1. Rodar emulator_server.py (backend)      │
+│  2. Rodar http.server (frontend)            │
+│  3. Editar web/index.html                   │
+│  4. Salvar e recarregar página (F5)         │
+│  5. Ver mudanças instantaneamente!          │
+│  6. Iterar rapidamente                      │
+│                                              │
+│  Quando pronto:                              │
+│  7. Copiar web/* para SD Card               │
+│  8. Upload firmware para ESP32              │
+│  9. Funciona igual ao emulador! ✅          │
+│                                              │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔴🟡🟢 LEDs Indicadores
-
-### Sistema de Status Visual
-
-Os LEDs fornecem **feedback imediato** do status ambiental, visível de longe:
-
-| LED | Cor | Status | Condição | Ação |
-|-----|-----|--------|----------|------|
-| 🟢 | **Verde** | **IDEAL** | Todas as condições dentro da faixa | Continue imprimindo |
-| 🟡 | **Amarelo** | **BOM** | Uma condição ligeiramente fora | Monitorar |
-| 🔴 | **Vermelho** | **RUIM** | Múltiplas condições ruins | Verificar ambiente |
-
-### Como Funciona
-
-```cpp
-// Lógica de Status
-void updateLEDs() {
-  // Contar condições fora da faixa
-  int outOfRange = 0;
-  
-  if (temp fora da faixa) outOfRange++;
-  if (umidade fora da faixa) outOfRange++;
-  if (luz fora da faixa) outOfRange++;
-  if (som fora da faixa) outOfRange++;
-  
-  // Determinar status
-  if (outOfRange == 0) {
-    // IDEAL - Verde
-    digitalWrite(LED_GREEN, HIGH);
-    digitalWrite(LED_YELLOW, LOW);
-    digitalWrite(LED_RED, LOW);
-    
-  } else if (outOfRange == 1) {
-    // BOM - Amarelo
-    digitalWrite(LED_GREEN, LOW);
-    digitalWrite(LED_YELLOW, HIGH);
-    digitalWrite(LED_RED, LOW);
-    
-  } else {
-    // RUIM - Vermelho
-    digitalWrite(LED_GREEN, LOW);
-    digitalWrite(LED_YELLOW, LOW);
-    digitalWrite(LED_RED, HIGH);
-  }
-}
-```
-
-### Comportamento dos LEDs
-
-- ✅ **Apenas 1 LED aceso** por vez
-- ✅ **Atualização imediata** ao mudar condições
-- ✅ **Sincronizado** com LCD e interface web
-- ✅ **Baixo consumo** (~60mA total, 20mA por LED)
-- ✅ **Teste na inicialização** (Verde→Amarelo→Vermelho)
-
-### Exemplo de Uso
+## 🛠️ Estrutura do Projeto
 
 ```
-Cenário 1: Tudo OK
-├─ Temp: 25°C ✓ (18-28°C)
-├─ Umid: 50% ✓ (40-60%)
-├─ Luz: 1500 ✓ (<3000)
-├─ Som: 1800 ✓ (<2000)
-└─ LED: 🟢 Verde LIGADO
-
-Cenário 2: Umidade Alta
-├─ Temp: 25°C ✓
-├─ Umid: 65% ✗ (fora: 40-60%)
-├─ Luz: 1500 ✓
-├─ Som: 1800 ✓
-└─ LED: 🟡 Amarelo LIGADO
-
-Cenário 3: Temp Alta + Umid Baixa
-├─ Temp: 30°C ✗ (fora: 18-28°C)
-├─ Umid: 35% ✗ (fora: 40-60%)
-├─ Luz: 1500 ✓
-├─ Som: 1800 ✓
-└─ LED: 🔴 Vermelho LIGADO
-```
-
-### Posicionamento Sugerido
-
-```
-         [PrintSense Device]
-    ┌──────────────────────────────────────────────────┐
-    │                                                  │
-    │    ┌─────────────────┐                           │            
-    │    │LCD Display 20x4 │     🟢     🟡     🔴     │ ← LEDs frontais
-    │    └─────────────────┘                           │
-    │                                                  │
-    │    [DHT22] [LDR] [Encoder]  [MAX4466]            │
-    │                                                  │
-    └──────────────────────────────────────────────────┘
+PI5/
+├── firmware/
+│   ├── PrintSense.ino          # Firmware principal ESP32
+│   ├── config.h                # Configurações (WiFi, pins, etc)
+│   └── README.md               # Documentação do firmware
+├── web/
+│   ├── index.html              # Dashboard principal
+│   ├── style.css               # Estilos CSS
+│   ├── script.js               # JavaScript do frontend
+│   └── assets/                 # Imagens, ícones, etc
+├── emulator_server.py          # Servidor emulador (desenvolvimento)
+├── docs/
+│   ├── hardware/               # Esquemáticos, diagramas
+│   ├── manual/                 # Manual do usuário
+│   └── api/                    # Documentação da API
+├── tests/                      # Scripts de teste
+├── examples/                   # Exemplos de uso
+├── LICENSE                     # Licença MIT
+└── README.md                   # Este arquivo
 ```
 
 ---
 
-## 📺 Display LCD
+## 📡 API REST
 
-### Layout 20x4
+### Endpoints Principais
 
-```
-┌────────────────────┐
-│PLA * IDEAL      🟢 │  Linha 0: Material, status, indicador LED
-│T:25.3°C   18-28°C  │  Linha 1: Temperatura + faixa ideal
-│H:76.0%    40-60%   │  Linha 2: Umidade + faixa ideal
-│Luz:1770  Som:1974  │  Linha 3: Luminosidade e Som
-└────────────────────┘
-```
-
-### Símbolos de Status
-
-| Símbolo | Significado | LED Correspondente |
-|---------|-------------|--------------------|
-| **\*** | IDEAL | 🟢 Verde |
-| **!** | BOM | 🟡 Amarelo |
-| **X** | RUIM | 🔴 Vermelho |
-
-### Indicador Visual no LCD
-
-No canto direito da primeira linha, aparece um caractere que representa o LED aceso:
-
-```
-Status IDEAL:
-PLA * IDEAL      ▓  ← Bloco cheio = Verde
-
-Status BOM:
-PETG ! BOM       ▒  ← Bloco médio = Amarelo
-
-Status RUIM:
-ABS X RUIM       ░  ← Bloco vazio = Vermelho
-```
-
----
-
-## 🌐 Interface Web
-
-### Dashboard Profissional
-
-**Características:**
-- ✨ Tema cyberpunk (cyan/verde neon)
-- 📊 Gráficos Chart.js em tempo real
-- 📱 Responsivo (mobile/desktop)
-- 🎨 Animações suaves
-- 🔄 Atualização automática (2s)
-- 🔴🟡🟢 **Badge de status com cor do LED**
-
-### Acessar Interface
-
-1. Conectar ao WiFi (PrintSense ou sua rede)
-2. Abrir navegador
-3. Digite: `http://192.168.4.1` (AP) ou `http://[IP_DO_ESP32]`
-
-### Status Badge com Cor do LED
-
-```html
-<!-- Verde (IDEAL) -->
-<div class="status-badge ideal">
-  🟢 IDEAL para PLA
-</div>
-
-<!-- Amarelo (BOM) -->
-<div class="status-badge bom">
-  🟡 BOM para PLA
-</div>
-
-<!-- Vermelho (RUIM) -->
-<div class="status-badge ruim">
-  🔴 RUIM para PLA
-</div>
-```
-
----
-
-## 🔌 API REST
-
-### Endpoints Disponíveis
-
-#### **GET** `/api/data`
-Retorna dados atuais dos sensores + status LED
-
-**Response:**
+#### `GET /api/data`
+Retorna dados atuais dos sensores
 ```json
 {
   "temperature": 25.3,
-  "humidity": 76.0,
-  "light": 1770,
-  "sound": 1974,
+  "humidity": 55.2,
+  "light": 1850,
+  "soundADC": 580,
+  "soundDB": 58.5,
   "timestamp": "2024-02-08 22:45:30",
   "material": "PLA",
   "status": "IDEAL",
-  "ledStatus": "GREEN",
-  "statusDetails": "Condições ideais!",
-  "thresholds": {
-    "tempMin": 18,
-    "tempMax": 28,
-    "humMin": 40,
-    "humMax": 60
-  }
+  "ledStatus": "GREEN"
 }
 ```
 
-#### **POST** `/api/material`
-Altera o material monitorado
-
-**Request:**
-```
-POST /api/material
-Content-Type: application/x-www-form-urlencoded
-
-material=PETG
+#### `POST /api/material`
+Altera material sendo impresso
+```bash
+curl -X POST http://ESP32_IP/api/material -d "material=PETG"
 ```
 
-**Response:**
+#### `GET /api/logs`
+Lista arquivos de log disponíveis
 ```json
 {
-  "success": true,
-  "newMaterial": "PETG",
-  "status": "BOM",
-  "ledStatus": "YELLOW"
+  "logs": ["20240208.csv", "20240207.csv", "20240206.csv"]
 }
 ```
 
----
-
-## 📁 Estrutura de Arquivos
-
+#### `GET /api/log/YYYYMMDD.csv`
+Download de log específico
 ```
-printsense/
-├── firmware/
-│   ├── PrintSense_LCD_I2C_FIXED.ino    # Firmware principal ⭐
-│   ├── config.h                         # Configurações
-│   └── tests/
-│       ├── Test_Encoder_EC11.ino
-│       ├── Test_LEDs.ino                # Teste dos LEDs ⭐
-│       ├── Test_SDCard.ino
-│       └── Test_DHT22.ino
-│
-├── web/
-│   ├── index_pro.html                  # Interface web
-│   ├── script_pro.js                   # JavaScript + Chart.js
-│   └── presentation.html               # Página de apresentação
-│
-├── docs/
-│   ├── README.md                       # Este arquivo
-│   ├── PINOUT.md                       # Diagrama detalhado
-│   ├── SHOPPING_LIST.md                # Lista de compras
-│   ├── LED_WIRING.md                   # Guia de conexão LEDs ⭐
-│   ├── TROUBLESHOOTING.md              # Solução de problemas
-│   └── API_DOCUMENTATION.md            # Documentação da API
-│
-├── schematics/
-│   ├── circuit_full.fzz                # Fritzing completo
-│   ├── circuit_full.png                # Imagem do circuito
-│   └── led_detail.png                  # Detalhe dos LEDs ⭐
-│
-├── examples/
-│   ├── python_monitor.py               # Cliente Python
-│   ├── led_external_control.py         # Controlar LEDs via API ⭐
-│   └── data_analysis.ipynb             # Análise de dados
-│
-└── README.md                           # Este arquivo
+timestamp,temperature,humidity,light,soundADC,soundDB,status
+2024-02-08 00:00:00,22.5,72.0,450,520,56.2,BOM
+2024-02-08 01:00:00,21.8,74.0,380,480,54.8,IDEAL
+...
 ```
+
+### Documentação Completa da API
+Ver: [docs/api/README.md](docs/api/README.md)
 
 ---
 
-## 🐛 Troubleshooting
+## 🔌 Esquema de Ligação
 
-### LEDs não acendem
+### Pinout ESP32-S3
 
-**Causa 1:** Polaridade invertida
+| Componente | Pino ESP32 | Descrição |
+|------------|------------|-----------|
+| DHT22 | GPIO 4 | Dados (temperatura/umidade) |
+| LDR | GPIO 34 (ADC) | Leitura analógica (luz) |
+| MAX4466 | GPIO 35 (ADC) | Leitura analógica (som) |
+| LCD I2C | GPIO 21 (SDA) | Dados I2C |
+| LCD I2C | GPIO 22 (SCL) | Clock I2C |
+| Encoder CLK | GPIO 25 | Clock do encoder |
+| Encoder DT | GPIO 26 | Data do encoder |
+| Encoder SW | GPIO 27 | Botão do encoder |
+| LED Verde | GPIO 13 | Indicador IDEAL |
+| LED Amarelo | GPIO 12 | Indicador BOM |
+| LED Vermelho | GPIO 14 | Indicador RUIM |
+| SD Card | SDMMC (built-in) | 4-bit mode |
 
-**Solução:**
+### Diagrama Completo
+Ver: [docs/hardware/schematic.pdf](docs/hardware/schematic.pdf)
+
+---
+
+## 📊 Uso
+
+### Interface Web
+
+#### Dashboard Principal
+- **Temperatura atual** em °C
+- **Umidade atual** em %
+- **Luminosidade** (0-4095)
+- **Ruído** em dB SPL
+- **Status global** (IDEAL/BOM/RUIM)
+- **Gráficos em tempo real** (Chart.js)
+- **Histórico** dos últimos 20 pontos
+
+#### Display LCD Local
 ```
-Verificar orientação do LED:
-- Perna LONGA (+) → Resistor → GPIO
-- Perna CURTA (-) → GND
+┌────────────────────┐
+│ PrintSense v1.0    │
+│ Material: PLA      │
+│ T:25.3C H:55% IDEAL│
+│ Luz:1850 Som:58dB  │
+└────────────────────┘
 ```
 
-**Causa 2:** Resistor errado
+#### LEDs Indicadores
+- 🟢 **Verde (IDEAL):** Todas condições perfeitas
+- 🟡 **Amarelo (BOM):** 1 parâmetro fora do ideal
+- 🔴 **Vermelho (RUIM):** 2+ parâmetros fora do ideal
 
-**Solução:**
+### Encoder Rotativo
+- **Girar:** Navegar entre materiais
+- **Pressionar:** Confirmar seleção
+- **Longo press (2s):** Menu de configurações
+
+### Logs CSV
+Formato: `YYYYMMDD.csv`
+```csv
+timestamp,temperature,humidity,light,soundADC,soundDB,status
+2024-02-08 22:45:30,25.3,76.0,1850,580,58.5,IDEAL
+2024-02-08 22:46:30,25.4,75.8,1845,620,60.2,BOM
 ```
-Usar resistor 220Ω (vermelho-vermelho-marrom)
-Não usar valores muito altos (>1kΩ)
-```
 
-**Causa 3:** LED queimado
+---
 
-**Solução:**
-```
-Testar LED com multímetro em modo diodo
-Substituir se necessário
-```
+## 🔬 Calibração
 
-### LED fica sempre aceso/apagado
-
-**Causa:** GPIO não configurado
-
-**Solução:**
+### Temperatura (DHT22)
 ```cpp
-void setup() {
-  pinMode(LED_GREEN, OUTPUT);
-  pinMode(LED_YELLOW, OUTPUT);
-  pinMode(LED_RED, OUTPUT);
-  
-  // Testar
-  digitalWrite(LED_GREEN, HIGH);
-  delay(1000);
-  digitalWrite(LED_GREEN, LOW);
-}
+#define TEMP_OFFSET 0.0  // Ajustar se necessário (±X °C)
 ```
 
-### Todos os LEDs acendem juntos
-
-**Causa:** GND comum incorreto
-
-**Solução:**
-```
-Verificar que todos os LEDs compartilham o mesmo GND
-Usar protoboard para conexões organizadas
-```
-
----
-
-## 🧪 Teste dos LEDs
-
-### Sketch de Teste
-
+### Umidade (DHT22)
 ```cpp
-#define LED_GREEN 2
-#define LED_YELLOW 15
-#define LED_RED 16
-
-void setup() {
-  Serial.begin(115200);
-  
-  pinMode(LED_GREEN, OUTPUT);
-  pinMode(LED_YELLOW, OUTPUT);
-  pinMode(LED_RED, OUTPUT);
-  
-  Serial.println("Teste de LEDs - PrintSense");
-  Serial.println("===========================");
-}
-
-void loop() {
-  // Verde
-  Serial.println("🟢 LED Verde");
-  digitalWrite(LED_GREEN, HIGH);
-  digitalWrite(LED_YELLOW, LOW);
-  digitalWrite(LED_RED, LOW);
-  delay(2000);
-  
-  // Amarelo
-  Serial.println("🟡 LED Amarelo");
-  digitalWrite(LED_GREEN, LOW);
-  digitalWrite(LED_YELLOW, HIGH);
-  digitalWrite(LED_RED, LOW);
-  delay(2000);
-  
-  // Vermelho
-  Serial.println("🔴 LED Vermelho");
-  digitalWrite(LED_GREEN, LOW);
-  digitalWrite(LED_YELLOW, LOW);
-  digitalWrite(LED_RED, HIGH);
-  delay(2000);
-  
-  // Todos apagados
-  Serial.println("⚫ Todos apagados");
-  digitalWrite(LED_GREEN, LOW);
-  digitalWrite(LED_YELLOW, LOW);
-  digitalWrite(LED_RED, LOW);
-  delay(1000);
-}
+#define HUM_OFFSET 0.0   // Ajustar se necessário (±X %)
 ```
 
-**Comportamento esperado:**
+### Som (MAX4466)
+Conversão ADC → dB SPL:
+```cpp
+// Tabela de calibração (ajustar com decibelímetro de referência)
+{50, 30.0},    // ADC 50 = 30 dB
+{150, 40.0},   // ADC 150 = 40 dB
+{600, 60.0},   // ADC 600 = 60 dB (padrão)
+{1000, 70.0}   // ADC 1000 = 70 dB
 ```
-🟢 Acende por 2s
-🟡 Acende por 2s
-🔴 Acende por 2s
-⚫ Todos apagam por 1s
-(repete)
+
+### Luz (LDR)
+Ajustar resistor série (10kΩ padrão) ou escala no código:
+```cpp
+int light = analogRead(LDR_PIN);  // 0-4095
+// Ajustar thresholds no código se necessário
 ```
+
+Ver: [docs/manual/calibration.md](docs/manual/calibration.md)
 
 ---
 
-## 🗺️ Roadmap
+## 🧪 Testes
 
-### ✅ v1.0 (Atual)
-- [x] Monitoramento de 4 sensores
-- [x] Display LCD 20x4
-- [x] Encoder rotativo
-- [x] Interface web com gráficos
-- [x] Logging em SD Card
-- [x] WiFi dual mode
-- [x] **LEDs indicadores (Verde/Amarelo/Vermelho)**
-- [x] 4 perfis de material
-- [x] API REST completa
+### Teste Unitário de Sensores
+```bash
+cd tests
+python test_sensors.py
+```
 
-### 🚧 v1.1 (Próximo)
-- [ ] Buzzer para alertas sonoros
-- [ ] Modo noturno (desligar LEDs)
-- [ ] PWM nos LEDs (controle de brilho)
-- [ ] Alertas por email/Telegram
-- [ ] App mobile (Flutter)
+### Teste de Integração
+```bash
+python test_integration.py
+```
 
-### 🔮 v2.0 (Futuro)
-- [ ] Controle de relés (aquecedor/desumidificador)
-- [ ] LEDs RGB (mais cores de status)
-- [ ] Tira LED WS2812B para efeitos
-- [ ] Machine Learning para predição
-- [ ] PCB profissional
+### Teste de Stress (24h)
+```bash
+python test_stress.py --duration 24
+```
 
 ---
 
 ## 🤝 Contribuindo
 
-Contribuições são muito bem-vindas! Áreas que precisam de ajuda:
+Contribuições são bem-vindas! Por favor:
 
-- 🔴🟡🟢 **LEDs:** Sugestões de novos padrões de status
-- 📱 **App Mobile:** Interface para controlar os LEDs
-- 🎨 **Design:** Case 3D que mostre os LEDs
-- 📊 **Análise:** Dashboard com histórico dos LEDs
-- 🧪 **Testes:** Validação em diferentes hardwares
-
-### Como Contribuir
-
-1. Fork o repositório
-2. Crie uma branch (`git checkout -b feature/minha-funcionalidade`)
-3. Commit suas mudanças (`git commit -m "Adiciona funcionalidade X"`)
-4. Push para o GitHub (`git push origin feature/minha-funcionalidade`)
+1. Fork o projeto
+2. Crie uma branch (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
+
+### Diretrizes
+- ✅ Código limpo e comentado
+- ✅ Testes unitários
+- ✅ Documentação atualizada
+- ✅ Commits semânticos
 
 ---
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a **MIT License**.
+Este projeto está licenciado sob a Licença MIT - veja [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 👥 Equipe
+
+**Projeto Integrador V - UNIVESP 2024**
+
+- **Valdir Silva** - Firmware e Hardware
+- **Lívia Rodrigues** - Interface Web
+- **Bruno Castro** - Design e UX
+- **Danielle Costa** - Análise de Dados
+- **Letícia Santos** - Documentação
+- **Jonathan Silva** - Testes
+- **Willians Souza** - Hardware
+- **Bruno Silva** - Integração
+
+**Orientadora:** Profa. Danielly Soares
+
+---
+
+## 🙏 Agradecimentos
+
+- UNIVESP - Universidade Virtual do Estado de São Paulo
+- Comunidade ESP32
+- Bibliotecas Open Source utilizadas
+- Farm de Impressão 3D (testes em campo)
 
 ---
 
 ## 📞 Contato
 
-**Projeto Integrador** - Monitoramento Ambiental para Impressão 3D
+- **GitHub:** [@brunohss](https://github.com/brunohss)
+- **Email:** contato@printsense.com.br
+- **Projeto:** [PI5](https://github.com/brunohss/PI5)
 
-- 🌐 Website: [printsense.github.io](https://printsense.github.io)
-- 📧 Email: printsense.team@gmail.com
-- 💬 Discord: [PrintSense Community](https://discord.gg/printsense)
+---
+
+## 🔗 Links Úteis
+
+- [Documentação Completa](docs/)
+- [Manual do Usuário](docs/manual/)
+- [API Reference](docs/api/)
+- [Troubleshooting](docs/troubleshooting.md)
+- [FAQ](docs/faq.md)
+- [Changelog](CHANGELOG.md)
 
 ---
 
 <div align="center">
 
-**Feito com ❤️ pela Equipe PrintSense**
+**⭐ Se este projeto te ajudou, considere dar uma estrela!**
 
-⭐ Se este projeto te ajudou, considere dar uma estrela!
-
-**Status atual:** 🟢 IDEAL | 🟡 BOM | 🔴 RUIM
-
-[⬆ Voltar ao topo](#-printsense---monitor-ambiental-profissional-para-impressão-3d)
+Made with ❤️ by UNIVESP Team
 
 </div>
