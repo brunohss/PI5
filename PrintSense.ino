@@ -1,6 +1,6 @@
 /*
  * ═══════════════════════════════════════════════════════════════
- *                    PRINTSENSE v1.0 FINAL
+ *                    PRINTSENSE v3.1 FINAL
  * ═══════════════════════════════════════════════════════════════
  * 
  * Monitor Ambiental Profissional para Impressão 3D
@@ -45,7 +45,7 @@
  * 
  * AUTOR: Equipe PrintSense
  * DATA: 2026
- * VERSÃO: 1.0 FINAL
+ * VERSÃO: 3.1 FINAL
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -66,8 +66,12 @@
 #include <dirent.h>
 
 // ==================== CONFIGURAÇÕES WiFi ====================
-const char* ssid = "VIVOFIBRA-BAF2";
-const char* password = "3dd920baf2";
+
+//const char* ssid     = "VIVOFIBRA-BAF2";
+//const char* password = "3dd920baf2";
+
+const char* ssid     = "ClaroVirtua170_2G";
+const char* password = "48608741";
 
 // ==================== PINOS - SENSORES ====================
 #define DHTPIN 17
@@ -408,6 +412,7 @@ void setup() {
   lcd.setCursor(0, 0);
   lcd.print("Montando SD Card...");
   initSDCard();
+  
   
   if (sdCardAvailable) {
     createDirectories();
@@ -921,7 +926,36 @@ MaterialThresholds getMaterialThresholds(String material) {
 // ═══════════════════════════════════════════════════════════════
 
 void setupWebServer() {
-  // Página principal
+  server.onNotFound([]() {
+
+  String path = "/sdcard/web" + server.uri();
+
+  FILE* file = fopen(path.c_str(), "r");
+
+  if (file) {
+
+    String contentType = "text/plain";
+
+    if (server.uri().endsWith(".html")) contentType = "text/html";
+    else if (server.uri().endsWith(".css")) contentType = "text/css";
+    else if (server.uri().endsWith(".js")) contentType = "application/javascript";
+    else if (server.uri().endsWith(".ico")) contentType = "image/x-icon";
+
+    String content = "";
+    char buffer[512];
+
+    while (fgets(buffer, sizeof(buffer), file)) {
+      content += buffer;
+    }
+
+    fclose(file);
+    server.send(200, contentType, content);
+    return;
+  }
+
+  server.send(404, "Arquivo não encontrado");
+});
+
   server.on("/", HTTP_GET, []() {
     if (sdCardAvailable) {
       FILE* file = fopen("/sdcard/web/index.html", "r");
@@ -971,36 +1005,53 @@ void setupWebServer() {
   
   // API - Mudar material
   server.on("/api/material", HTTP_POST, []() {
-    if (server.hasArg("material")) {
-      currentMaterial = server.arg("material");
-      
-      // Atualizar índice do encoder
-      for (int i = 0; i < 4; i++) {
-        if (currentMaterial == materialNames[i]) {
-          currentMaterialIndex = i;
-          break;
-        }
-      }
-      
-      Serial.print("[API] Material alterado: ");
-      Serial.println(currentMaterial);
-      
-      // Atualizar LEDs imediatamente
-      updateLEDs();
-      
-      StaticJsonDocument<256> doc;
-      doc["success"] = true;
-      doc["newMaterial"] = currentMaterial;
-      doc["status"] = getStatus();
-      doc["ledStatus"] = getLEDStatus();
-      
-      String response;
-      serializeJson(doc, response);
-      server.send(200, "application/json", response);
-    } else {
-      server.send(400, "application/json", "{\"success\":false,\"error\":\"Missing material parameter\"}");
+
+    if (!server.hasArg("plain")) {
+        server.send(400, "application/json", "{\"success\":false,\"error\":\"Empty body\"}");
+        return;
     }
-  });
+
+    String body = server.arg("plain");
+
+    StaticJsonDocument<256> doc;
+    DeserializationError error = deserializeJson(doc, body);
+
+    if (error) {
+        server.send(400, "application/json", "{\"success\":false,\"error\":\"Invalid JSON\"}");
+        return;
+    }
+
+    if (!doc.containsKey("material")) {
+        server.send(400, "application/json", "{\"success\":false,\"error\":\"Missing material\"}");
+        return;
+    }
+
+    currentMaterial = doc["material"].as<String>();
+
+    // Atualizar índice do encoder
+    for (int i = 0; i < 4; i++) {
+        if (currentMaterial == materialNames[i]) {
+            currentMaterialIndex = i;
+            break;
+        }
+    }
+
+    Serial.print("[API] Material alterado (JSON): ");
+    Serial.println(currentMaterial);
+
+    updateLEDs();
+
+    StaticJsonDocument<256> responseDoc;
+    responseDoc["success"] = true;
+    responseDoc["newMaterial"] = currentMaterial;
+    responseDoc["status"] = getStatus();
+    responseDoc["ledStatus"] = getLEDStatus();
+
+    String response;
+    serializeJson(responseDoc, response);
+
+    server.send(200, "application/json", response);
+});
   
   // API - Listar logs
   server.on("/api/logs", HTTP_GET, []() {
