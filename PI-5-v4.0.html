@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintSense v4.0 FreeRTOS - Documentação Completa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .badges {
+            margin-top: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        nav {
+            background: #2c3e50;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: background 0.3s;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background: #34495e;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h4 {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .tech-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #e83e8c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #667eea;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -43px;
+            top: 5px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
+        .performance-chart {
+            margin: 30px 0;
+        }
+
+        .bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            position: relative;
+            transition: width 0.5s;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-green { background: #28a745; }
+        .status-yellow { background: #ffc107; }
+        .status-red { background: #dc3545; }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .team-member h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 10px 5px;
+            transition: transform 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>🖨️ PrintSense v4.0 FreeRTOS</h1>
+            <p>Sistema Profissional de Monitoramento Ambiental para Impressão 3D</p>
+            <div class="badges">
+                <span class="badge">ESP32-S3 Dual-Core</span>
+                <span class="badge">FreeRTOS</span>
+                <span class="badge">IoT</span>
+                <span class="badge">REST API</span>
+                <span class="badge">Chart.js</span>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.95em;">
+                Projeto Integrador V - Engenharia de Computação<br>
+                UNIVESP 2026
+            </p>
+        </header>
+
+        <!-- NAVIGATION -->
+        <nav>
+            <ul>
+                <li><a href="#intro">Introdução</a></li>
+                <li><a href="#problema">Problema</a></li>
+                <li><a href="#solucao">Solução</a></li>
+                <li><a href="#tecnologias">Tecnologias</a></li>
+                <li><a href="#arquitetura">Arquitetura</a></li>
+                <li><a href="#hardware">Hardware</a></li>
+                <li><a href="#funcionalidades">Funcionalidades</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#equipe">Equipe</a></li>
+            </ul>
+        </nav>
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- INTRODUÇÃO -->
+            <section id="intro">
+                <h2>📖 Introdução</h2>
+                <p>
+                    O <strong>PrintSense v4.0 FreeRTOS</strong> é um sistema embarcado de monitoramento ambiental desenvolvido especificamente para ambientes de impressão 3D. Utilizando o poderoso microcontrolador <strong>ESP32-S3</strong> com arquitetura dual-core e sistema operacional de tempo real <strong>FreeRTOS</strong>, o projeto oferece monitoramento preciso e em tempo real das condições que afetam diretamente a qualidade das impressões.
+                </p>
+
+                <div class="highlight">
+                    <h4>🎯 Objetivo Principal</h4>
+                    <p>
+                        Detectar e alertar sobre condições ambientais inadequadas (temperatura, umidade, luminosidade e ruído) que possam comprometer a qualidade das impressões 3D, permitindo intervenção preventiva antes da ocorrência de falhas.
+                    </p>
+                </div>
+
+                <h3>Por que este projeto é importante?</h3>
+                <p>
+                    Impressões 3D de qualidade dependem de condições ambientais controladas. Pequenas variações podem resultar em:
+                </p>
+                <ul>
+                    <li>❌ Falhas de adesão (warping)</li>
+                    <li>❌ Delaminação entre camadas</li>
+                    <li>❌ Absorção de umidade pelo filamento</li>
+                    <li>❌ Degradação de resinas fotossensíveis</li>
+                    <li>❌ Imperfeições causadas por vibrações</li>
+                </ul>
+                <p>
+                    O PrintSense previne estes problemas através de monitoramento contínuo e alertas inteligentes.
+                </p>
+            </section>
+
+            <!-- PROBLEMA -->
+            <section id="problema">
+                <h2>⚠️ O Problema</h2>
+                
+                <h3>Desafios na Impressão 3D</h3>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🌡️ Temperatura</h4>
+                        <p>Variações de temperatura causam expansão/contração térmica, resultando em warping e delaminação. Cada material tem sua faixa ideal.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>💧 Umidade</h4>
+                        <p>Filamentos higroscópicos (PLA, Nylon, PETG) absorvem umidade do ar, resultando em bolhas e fragilidade. Requer ambiente controlado.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>☀️ Luminosidade</h4>
+                        <p>Resinas fotossensíveis degradam sob luz UV/visível. Impressoras SLA/DLP exigem ambiente com luz controlada.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>📢 Ruído/Vibração</h4>
+                        <p>Vibrações mecânicas e acústicas causam imperfeições na superfície (ringing, ghosting). Ambientes silenciosos são ideais.</p>
+                    </div>
+                </div>
+
+                <h3>Impactos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Condição</th>
+                            <th>Efeito na Impressão</th>
+                            <th>Consequência</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Temp. Baixa</td>
+                            <td>Má adesão entre camadas</td>
+                            <td>Peça quebra facilmente</td>
+                        </tr>
+                        <tr>
+                            <td>Temp. Alta</td>
+                            <td>Warping, distorção</td>
+                            <td>Geometria incorreta</td>
+                        </tr>
+                        <tr>
+                            <td>Umidade Alta</td>
+                            <td>Bolhas, fragilização</td>
+                            <td>Acabamento ruim + quebra</td>
+                        </tr>
+                        <tr>
+                            <td>Luz Excessiva</td>
+                            <td>Cura prematura (resina)</td>
+                            <td>Perda de material</td>
+                        </tr>
+                        <tr>
+                            <td>Vibração</td>
+                            <td>Imperfeições superficiais</td>
+                            <td>Acabamento amador</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SOLUÇÃO -->
+            <section id="solucao">
+                <h2>✅ A Solução: PrintSense v4.0</h2>
+                
+                <div class="highlight">
+                    <h4>🚀 Abordagem Inovadora</h4>
+                    <p>
+                        Diferente de soluções que apenas <em>registram</em> dados, o PrintSense oferece:
+                    </p>
+                    <ul>
+                        <li>✅ Monitoramento em tempo real (1 Hz)</li>
+                        <li>✅ Análise inteligente por material (PLA, PETG, ABS, Resina)</li>
+                        <li>✅ Alertas visuais instantâneos (LEDs)</li>
+                        <li>✅ Interface web profissional</li>
+                        <li>✅ Logging histórico para análise</li>
+                        <li>✅ Arquitetura dual-core (sem travamentos)</li>
+                    </ul>
+                </div>
+
+                <h3>Fluxo de Funcionamento</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>1. Coleta de Dados</h4>
+                        <p>Sensores leem temperatura, umidade, luz e som a cada 1 segundo (Task Sensores - Core 1)</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>2. Processamento</h4>
+                        <p>ESP32 converte dados brutos (ADC → dB SPL, correções) e calcula status baseado no material selecionado</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>3. Análise</h4>
+                        <p>Sistema compara com thresholds do material ativo, aplicando histerese para evitar oscilações</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>4. Feedback Visual</h4>
+                        <p>LEDs indicam status (Verde=IDEAL, Amarelo=BOM, Vermelho=RUIM) instantaneamente</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>5. Interface</h4>
+                        <p>LCD mostra dados em tempo real. Web dashboard exibe gráficos Chart.js</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>6. Logging</h4>
+                        <p>Task dedicada (Core 0) grava logs CSV no SD Card a cada 60s para análise posterior</p>
+                    </div>
+                </div>
+
+                <h3>Thresholds por Material</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Temp (°C)</th>
+                            <th>Umidade (%)</th>
+                            <th>Luz (max)</th>
+                            <th>Som (dB)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PLA</strong></td>
+                            <td>18-28</td>
+                            <td>40-60</td>
+                            <td>3000</td>
+                            <td>70</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PETG</strong></td>
+                            <td>20-30</td>
+                            <td>30-50</td>
+                            <td>3000</td>
+                            <td>70</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ABS</strong></td>
+                            <td>22-32</td>
+                            <td>20-40</td>
+                            <td>3000</td>
+                            <td>70</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RESINA</strong></td>
+                            <td>20-25</td>
+                            <td>40-60</td>
+                            <td>1000</td>
+                            <td>65</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- TECNOLOGIAS -->
+            <section id="tecnologias">
+                <h2>🛠️ Tecnologias Utilizadas</h2>
+                
+                <h3>Stack Completo</h3>
+                
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-icon">⚙️</div>
+                        <h4>ESP32-S3</h4>
+                        <p>MCU Dual-core Xtensa LX7 240 MHz</p>
+                        <p><small>512KB RAM + 8MB PSRAM</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🔄</div>
+                        <h4>FreeRTOS</h4>
+                        <p>Real-Time Operating System</p>
+                        <p><small>v10.4.3 - Multi-tasking</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🌡️</div>
+                        <h4>DHT22</h4>
+                        <p>Sensor Temp/Umidade</p>
+                        <p><small>±0.5°C / ±2% RH</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">💡</div>
+                        <h4>LDR</h4>
+                        <p>Sensor de Luminosidade</p>
+                        <p><small>ADC 12-bit (0-4095)</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🎤</div>
+                        <h4>MAX4466</h4>
+                        <p>Microfone Eletreto</p>
+                        <p><small>Conversão ADC → dB SPL</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">📺</div>
+                        <h4>LCD I2C</h4>
+                        <p>Display 20x4</p>
+                        <p><small>HD44780 @ 0x27</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🎛️</div>
+                        <h4>Encoder EC11</h4>
+                        <p>Controle Rotativo</p>
+                        <p><small>CLK + DT + SW</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">💾</div>
+                        <h4>SD Card</h4>
+                        <p>SDMMC 1-bit</p>
+                        <p><small>FAT32, logs CSV</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">📡</div>
+                        <h4>WiFi</h4>
+                        <p>802.11 b/g/n</p>
+                        <p><small>2.4 GHz, STA mode</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🌐</div>
+                        <h4>HTTP Server</h4>
+                        <p>WebServer embarcado</p>
+                        <p><small>REST API + Static files</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">📊</div>
+                        <h4>Chart.js</h4>
+                        <p>Gráficos Frontend</p>
+                        <p><small>v3.9, real-time</small></p>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <div class="tech-icon">🔗</div>
+                        <h4>ArduinoJson</h4>
+                        <p>Serialização JSON</p>
+                        <p><small>v6.x, eficiente</small></p>
+                    </div>
+                </div>
+
+                <h3>Protocolos e Comunicação</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Protocolo</th>
+                            <th>Uso</th>
+                            <th>Implementação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>HTTP/1.1</strong></td>
+                            <td>Servidor web</td>
+                            <td>WebServer.h (porta 80)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>REST API</strong></td>
+                            <td>Endpoints JSON</td>
+                            <td>GET/POST, ArduinoJson</td>
+                        </tr>
+                        <tr>
+                            <td><strong>I2C</strong></td>
+                            <td>LCD communication</td>
+                            <td>Wire.h (SDA/SCL)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1-Wire</strong></td>
+                            <td>DHT22 data</td>
+                            <td>DHT.h</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SDMMC</strong></td>
+                            <td>SD Card I/O</td>
+                            <td>SD_MMC.h (1-bit mode)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NTP</strong></td>
+                            <td>Time sync</td>
+                            <td>configTime()</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ARQUITETURA -->
+            <section id="arquitetura">
+                <h2>🏗️ Arquitetura FreeRTOS</h2>
+                
+                <h3>Visão Geral Dual-Core</h3>
+                
+                <div class="architecture-diagram">
+<pre>
+╔═══════════════════════════════════════════════════════════╗
+║            ESP32-S3 Dual-Core Architecture                ║
+╠═══════════════════════════════════════════════════════════╣
+║                                                           ║
+║  CORE 0 (Protocol CPU)         CORE 1 (Application)      ║
+║  ══════════════════            ══════════════════         ║
+║                                                           ║
+║  🌐 Task WebServer             🌡️  Task Sensores         ║
+║     • Prioridade: 2            │   • Prioridade: 3 ★     ║
+║     • Stack: 4KB               │   • Stack: 4KB          ║
+║     • Ciclo: 1ms               │   • Ciclo: 1000ms       ║
+║     • HTTP requests            │   • DHT22, LDR, MAX4466 ║
+║     • JSON responses           │   • Cálculo de status   ║
+║                                │                         ║
+║  💾 Task Logging               📺 Task LCD               ║
+║     • Prioridade: 1            │   • Prioridade: 2       ║
+║     • Stack: 3KB               │   • Stack: 3KB          ║
+║     • Ciclo: 60s               │   • Ciclo: 500ms        ║
+║     • SD Card CSV              │   • I2C display         ║
+║     • Assíncrono               │   • Normal/Menu modes   ║
+║                                │                         ║
+║                                💡 Task LEDs              ║
+║                                │   • Prioridade: 2       ║
+║                                │   • Stack: 2KB          ║
+║                                │   • Ciclo: 100ms        ║
+║                                │   • RGB indicators      ║
+║                                │                         ║
+║                                🎛️  Task Encoder ★★       ║
+║                                    • Prioridade: 3       ║
+║                                    • Stack: 2KB          ║
+║                                    • Ciclo: 10ms (100Hz) ║
+║                                    • State machine       ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
+
+Prioridades: 1 = Baixa | 2 = Média | 3 = Alta
+★ = Alta Prioridade  |  ★★ = Prioridade Crítica
+</pre>
+                </div>
+
+                <h3>Comunicação Entre Tasks</h3>
+                
+                <h4>Mutexes (Proteção de Recursos)</h4>
+                <pre><code>SemaphoreHandle_t i2cMutex;    // Protege LCD (I2C)
+SemaphoreHandle_t dataMutex;   // Protege currentData
+SemaphoreHandle_t sdMutex;     // Protege SD Card
+
+// Uso:
+xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(100));
+lcd.print("Protegido!");
+xSemaphoreGive(i2cMutex);</code></pre>
+
+                <h4>Queues (Filas de Mensagens)</h4>
+                <pre><code>QueueHandle_t sensorDataQueue;  // Task Sensores → outras tasks
+QueueHandle_t lcdUpdateQueue;   // Comandos → Task LCD
+QueueHandle_t logQueue;         // Dados → Task Logging
+
+// Envio:
+xQueueSend(lcdUpdateQueue, &data, 0);
+
+// Recepção:
+xQueueReceive(lcdUpdateQueue, &data, pdMS_TO_TICKS(100));</code></pre>
+
+                <h4>Event Groups (Sincronização)</h4>
+                <pre><code>EventGroupHandle_t systemEvents;
+
+#define SENSOR_READY_BIT (1 << 0)
+#define MATERIAL_CHANGED_BIT (1 << 4)
+
+// Sinalizar evento:
+xEventGroupSetBits(systemEvents, SENSOR_READY_BIT);
+
+// Aguardar evento:
+xEventGroupWaitBits(systemEvents, SENSOR_READY_BIT, ...);</code></pre>
+
+                <h3>Por que FreeRTOS?</h3>
+                <div class="highlight">
+                    <ul>
+                        <li>✅ <strong>Multi-tasking Real</strong>: 6 tarefas simultâneas</li>
+                        <li>✅ <strong>Responsividade</strong>: Encoder nunca trava (10ms garantido)</li>
+                        <li>✅ <strong>Isolamento</strong>: WebServer não afeta sensores</li>
+                        <li>✅ <strong>Escalonamento</strong>: Prioridades otimizadas</li>
+                        <li>✅ <strong>Dual-Core</strong>: 2 CPUs totalmente utilizados</li>
+                        <li>✅ <strong>Thread-Safe</strong>: Mutexes previnem race conditions</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- HARDWARE -->
+            <section id="hardware">
+                <h2>🔌 Hardware</h2>
+                
+                <h3>Pinout ESP32-S3</h3>
+                
+                <div class="architecture-diagram">
+<pre>
+┌─────────────────────────────────────────────────┐
+│         ESP32-S3 N16R8 DevKit                   │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  SENSORES:                                      │
+│    GPIO 17 ────── DHT22 (Data)                  │
+│    GPIO 4  ────── LDR (ADC1_CH3)                │
+│    GPIO 8  ────── MAX4466 (ADC1_CH7)            │
+│                                                 │
+│  DISPLAY & CONTROLE:                            │
+│    GPIO 10 ────── LCD SDA (I2C)                 │
+│    GPIO 13 ────── LCD SCL (I2C)                 │
+│    GPIO 7  ────── Encoder CLK                   │
+│    GPIO 6  ────── Encoder DT                    │
+│    GPIO 5  ────── Encoder SW (botão)            │
+│                                                 │
+│  INDICADORES:                                   │
+│    GPIO 2  ──┬── [220Ω] ──── LED Verde          │
+│    GPIO 15 ──┼── [220Ω] ──── LED Amarelo        │
+│    GPIO 16 ──┴── [220Ω] ──── LED Vermelho       │
+│                                                 │
+│  SD CARD (SDMMC 1-bit):                         │
+│    GPIO 39 ────── CLK                           │
+│    GPIO 38 ────── CMD                           │
+│    GPIO 40 ────── D0                            │
+│                                                 │
+│  ALIMENTAÇÃO:                                   │
+│    5V ──────────── USB / Ext                    │
+│    GND ─────────── Common Ground                │
+│                                                 │
+└─────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Lista de Materiais (BOM)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Qtd</th>
+                            <th>Componente</th>
+                            <th>Especificação</th>
+                            <th>Função</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>ESP32-S3 DevKit</td>
+                            <td>N16R8 (16MB Flash, 8MB PSRAM)</td>
+                            <td>Microcontrolador principal</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>DHT22 (AM2302)</td>
+                            <td>-40~80°C, 0-100% RH</td>
+                            <td>Sensor temperatura/umidade</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>LDR 5mm</td>
+                            <td>Fotoresistor GL5528</td>
+                            <td>Sensor de luminosidade</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>MAX4466</td>
+                            <td>Microfone eletreto + amp</td>
+                            <td>Sensor de som</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>LCD I2C 20x4</td>
+                            <td>HD44780, endereço 0x27</td>
+                            <td>Display de informações</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Encoder EC11</td>
+                            <td>Rotativo + push button</td>
+                            <td>Interface do usuário</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>LED 5mm</td>
+                            <td>Verde, Amarelo, Vermelho</td>
+                            <td>Indicadores de status</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Resistor 220Ω</td>
+                            <td>1/4W, ±5%</td>
+                            <td>Limitador de corrente LED</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Módulo SD Card</td>
+                            <td>SDMMC compatible</td>
+                            <td>Interface para SD</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>SD Card</td>
+                            <td>4-32GB, FAT32</td>
+                            <td>Armazenamento logs/web</td>
+                        </tr>
+                        <tr>
+                            <td>-</td>
+                            <td>Jumpers</td>
+                            <td>M-M, M-F</td>
+                            <td>Conexões</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Fonte 5V</td>
+                            <td>2A+ via USB</td>
+                            <td>Alimentação</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Esquema de LEDs</h3>
+                <pre><code>ESP32          Resistor      LED
+──────────────────────────────────
+GPIO 2  ───┬─── [220Ω] ───┬─── Verde (+)
+GPIO 15 ───┼─── [220Ω] ───┼─── Amarelo (+)
+GPIO 16 ───┴─── [220Ω] ───┴─── Vermelho (+)
+                          │
+                         GND</code></pre>
+            </section>
+
+            <!-- FUNCIONALIDADES -->
+            <section id="funcionalidades">
+                <h2>🎯 Funcionalidades</h2>
+                
+                <h3>Interface LCD</h3>
+                
+                <h4>Modo Normal</h4>
+                <div class="architecture-diagram">
+<pre>
+┌────────────────────┐
+│ PLA      * IDEAL   │  ← Material + Status
+│ T:25.3°C   18-28°C │  ← Temperatura (atual + range)
+│ H:55.2%    40-60%  │  ← Umidade (atual + range)
+│ Luz:1850  Som:60dB │  ← Luminosidade + Som
+└────────────────────┘
+</pre>
+                </div>
+
+                <h4>Modo Menu</h4>
+                <div class="architecture-diagram">
+<pre>
+┌────────────────────┐
+│ SELECIONAR MATERIAL│
+│   PETG             │  ← Material anterior
+│ > PLA <            │  ← Material selecionado
+│   ABS              │  ← Material seguinte
+└────────────────────┘
+
+Operação:
+  1. Pressionar botão → Abre menu
+  2. Girar encoder → Navega
+  3. Pressionar botão → Confirma
+</pre>
+                </div>
+
+                <h3>Indicadores LED</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>LED</th>
+                            <th>Status</th>
+                            <th>Condição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="status-indicator status-green"></span> Verde</td>
+                            <td><strong>IDEAL</strong></td>
+                            <td>Todos os parâmetros dentro do range</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status-indicator status-yellow"></span> Amarelo</td>
+                            <td><strong>BOM</strong></td>
+                            <td>1 parâmetro fora do range</td>
+                        </tr>
+                        <tr>
+                            <td><span class="status-indicator status-red"></span> Vermelho</td>
+                            <td><strong>RUIM</strong></td>
+                            <td>2 ou mais parâmetros fora do range</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Interface Web</h3>
+                <ul>
+                    <li>📊 <strong>Dashboard em tempo real</strong> - Atualização a cada 1s</li>
+                    <li>📈 <strong>Gráficos Chart.js</strong> - Últimas 20 leituras</li>
+                    <li>🎨 <strong>Cards informativos</strong> - Temp, Umid, Luz, Som</li>
+                    <li>🎛️ <strong>Seletor de material</strong> - Interface web</li>
+                    <li>💾 <strong>Download de logs</strong> - Arquivos CSV</li>
+                    <li>🌐 <strong>Responsivo</strong> - Mobile-friendly</li>
+                </ul>
+
+                <h3>API REST</h3>
+                <pre><code>GET  /api/data               # Dados atuais (JSON)
+POST /api/material           # Trocar material
+GET  /api/logs               # Listar logs disponíveis
+GET  /api/log?file=X.csv     # Download de log específico
+GET  /                       # Interface web
+GET  /style.css              # Estilos
+GET  /script.js              # JavaScript</code></pre>
+
+                <h3>Logging</h3>
+                <ul>
+                    <li>📁 <strong>Formato:</strong> CSV (timestamp, temp, hum, luz, som, status)</li>
+                    <li>📅 <strong>Arquivo:</strong> Um por dia (YYYYMMDD.csv)</li>
+                    <li>⏱️ <strong>Intervalo:</strong> 60 segundos (configurável)</li>
+                    <li>💾 <strong>Local:</strong> SD Card (/sdcard/logs/)</li>
+                    <li>🔄 <strong>Assíncrono:</strong> Task dedicada (não bloqueia)</li>
+                </ul>
+            </section>
+
+            <!-- PERFORMANCE -->
+            <section id="performance">
+                <h2>📊 Performance</h2>
+                
+                <h3>Comparação: v3.1 (Loop) vs v4.0 (FreeRTOS)</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Métrica</th>
+                            <th>v3.1 (Loop)</th>
+                            <th>v4.0 (FreeRTOS)</th>
+                            <th>Melhoria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Resposta Encoder</strong></td>
+                            <td>2000ms</td>
+                            <td>10ms</td>
+                            <td style="color: green;">200x mais rápido ⚡</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Atualização LCD</strong></td>
+                            <td>1500ms</td>
+                            <td>500ms</td>
+                            <td style="color: green;">3x mais rápido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Latência WebServer</strong></td>
+                            <td>~500ms</td>
+                            <td>~1ms</td>
+                            <td style="color: green;">500x mais rápido</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CPU Utilizado</strong></td>
+                            <td>50% (1 core)</td>
+                            <td>~18.5% (2 cores)</td>
+                            <td style="color: green;">2.7x mais eficiente</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Uso RAM</strong></td>
+                            <td>~120KB</td>
+                            <td>~118KB</td>
+                            <td style="color: green;">Otimizado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jitter</strong></td>
+                            <td>~500ms</td>
+                            <td><5ms</td>
+                            <td style="color: green;">100x mais estável</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Travamentos</strong></td>
+                            <td>Frequentes</td>
+                            <td>Nunca</td>
+                            <td style="color: green;">∞ melhor</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Uso de Recursos</h3>
+                
+                <div class="performance-chart">
+                    <h4>RAM (512KB total)</h4>
+                    <div class="bar" style="width: 23%;">118KB usado (23%)</div>
+                    <div style="background: #28a745; width: 77%; padding: 10px; color: white; margin: 10px 0; border-radius: 5px;">394KB livre (77%)</div>
+                </div>
+
+                <div class="performance-chart">
+                    <h4>PSRAM (8MB total)</h4>
+                    <div class="bar" style="width: 1%;">50KB usado (<1%)</div>
+                    <div style="background: #28a745; width: 99%; padding: 10px; color: white; margin: 10px 0; border-radius: 5px;">~8MB livre (99%)</div>
+                </div>
+
+                <div class="performance-chart">
+                    <h4>Flash (16MB total)</h4>
+                    <div class="bar" style="width: 7.5%;">1.2MB usado (7.5%)</div>
+                    <div style="background: #28a745; width: 92.5%; padding: 10px; color: white; margin: 10px 0; border-radius: 5px;">14.8MB livre (92.5%)</div>
+                </div>
+
+                <h3>CPU por Core</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Core</th>
+                            <th>Tasks</th>
+                            <th>Uso Médio</th>
+                            <th>Livre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Core 0</strong></td>
+                            <td>WebServer + Logging</td>
+                            <td>~6%</td>
+                            <td style="color: green;">94% livre</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Core 1</strong></td>
+                            <td>Sensores + LCD + LEDs + Encoder</td>
+                            <td>~31%</td>
+                            <td style="color: green;">69% livre</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>Total Médio</strong></td>
+                            <td><strong>~18.5%</strong></td>
+                            <td style="color: green;"><strong>81.5% livre</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Stack Usage</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Alocado</th>
+                            <th>Usado (pico)</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>taskSensors</td>
+                            <td>4KB</td>
+                            <td>~2.8KB</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>taskLCD</td>
+                            <td>3KB</td>
+                            <td>~2.1KB</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td>taskLEDs</td>
+                            <td>2KB</td>
+                            <td>~1.2KB</td>
+                            <td>60%</td>
+                        </tr>
+                        <tr>
+                            <td>taskEncoder</td>
+                            <td>2KB</td>
+                            <td>~1.3KB</td>
+                            <td>65%</td>
+                        </tr>
+                        <tr>
+                            <td>taskWebServer</td>
+                            <td>4KB</td>
+                            <td>~3.2KB</td>
+                            <td>80%</td>
+                        </tr>
+                        <tr>
+                            <td>taskLogging</td>
+                            <td>3KB</td>
+                            <td>~2.0KB</td>
+                            <td>67%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- EQUIPE -->
+            <section id="equipe">
+                <h2>👥 Equipe</h2>
+                
+                <p style="text-align: center; font-size: 1.2em; margin-bottom: 30px;">
+                    <strong>Projeto Integrador V</strong><br>
+                    Engenharia de Computação - UNIVESP 2026
+                </p>
+
+                <div class="team-grid">
+                    <div class="team-member">
+                        <h4>Valdir Silva</h4>
+                        <p>Firmware & Arquitetura FreeRTOS</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Bruno Silva</h4>
+                        <p>Hardware & Integração</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Lívia Rodrigues</h4>
+                        <p>Interface Web & Frontend</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Bruno Castro</h4>
+                        <p>Design & UX</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Danielle Costa</h4>
+                        <p>Análise de Dados</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Letícia Santos</h4>
+                        <p>Documentação Técnica</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Jonathan Silva</h4>
+                        <p>Testes & QA</p>
+                    </div>
+                    
+                    <div class="team-member">
+                        <h4>Willians Souza</h4>
+                        <p>Montagem Hardware</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <h3>Orientadora</h3>
+                    <p style="font-size: 1.2em;"><strong>Profa. Danielly Soares</strong></p>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <h3>Instituição</h3>
+                    <p style="font-size: 1.3em;"><strong>UNIVESP</strong></p>
+                    <p>Universidade Virtual do Estado de São Paulo</p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <h3>PrintSense v4.0 FreeRTOS</h3>
+            <p>Sistema Profissional de Monitoramento Ambiental para Impressão 3D</p>
+            <p style="margin-top: 20px;">
+                <a href="https://github.com/brunohss/PI5" class="btn">📂 GitHub</a>
+                <a href="#" class="btn">📖 Documentação</a>
+                <a href="#" class="btn">📧 Contato</a>
+            </p>
+            <p style="margin-top: 30px; opacity: 0.8;">
+                © 2026 Equipe PrintSense - UNIVESP<br>
+                Licença MIT - Código aberto
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                Made with ❤️ by UNIVESP Team
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
