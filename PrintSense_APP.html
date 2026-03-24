@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintSense Desktop App - Documentação Técnica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d9ff;
+            --secondary: #00ff88;
+            --accent: #ff3366;
+            --dark: #0a0e27;
+            --darker: #050817;
+            --card-bg: rgba(15, 20, 45, 0.9);
+            --border: rgba(0, 217, 255, 0.3);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--darker);
+            color: #e0f7ff;
+            line-height: 1.6;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at top, rgba(0, 217, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(var(--primary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.03;
+        }
+
+        header {
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            padding: 2rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #b0d0e0;
+            font-size: 0.95rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-badge {
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid var(--primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: var(--primary);
+            color: var(--darker);
+            transform: scale(1.1);
+        }
+
+        .code-block {
+            background: rgba(5, 8, 23, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 255, 136, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #b0d0e0;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3.5rem;
+            top: 1.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: #b0d0e0;
+        }
+
+        .highlight {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .accent-text {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 0.5rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .screenshot-placeholder {
+            background: rgba(0, 217, 255, 0.05);
+            border: 2px dashed var(--border);
+            border-radius: 15px;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .screenshot-placeholder p {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 2px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: #b0d0e0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="grid-bg"></div>
+
+    <header>
+        <h1>🖨️ PRINTSENSE</h1>
+        <p class="subtitle">Desktop Application - Documentação Técnica Completa</p>
+    </header>
+
+    <div class="container">
+        <!-- VISÃO GERAL -->
+        <section class="section">
+            <h2 class="section-title">📋 Visão Geral do Projeto</h2>
+            <div class="card">
+                <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                    <span class="highlight">PrintSense Desktop</span> é uma aplicação profissional de monitoramento em tempo real 
+                    para ambientes de impressão 3D, desenvolvida em <span class="highlight">C# WPF (.NET Framework 4.8)</span>.
+                </p>
+                <p style="color: #b0d0e0;">
+                    O sistema integra sensores ESP32 via REST API, processamento de Machine Learning para análise preditiva, 
+                    visualização avançada com gráficos em tempo real, e exportação de relatórios profissionais em Excel.
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Tabs Funcionais</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Temas (Light/Dark)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Sensores Monitorados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89.3%</div>
+                    <div class="stat-label">Acurácia ML</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FUNCIONALIDADES PRINCIPAIS -->
+        <section class="section">
+            <h2 class="section-title">⚡ Funcionalidades Principais</h2>
+            <div class="grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Dashboard em Tempo Real</div>
+                    <div class="feature-desc">
+                        Monitoramento ao vivo de temperatura, umidade, luz e som com gráficos interativos LiveCharts
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-title">Calibração de Sensores</div>
+                    <div class="feature-desc">
+                        Sistema de offset para DHT22 com sliders interativos e persistência em JSON
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <div class="feature-title">Configurações Avançadas</div>
+                    <div class="feature-desc">
+                        Ajuste de IP, porta, intervalo de atualização e timeout com teste de conexão
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <div class="feature-title">Relatórios Excel</div>
+                    <div class="feature-desc">
+                        Exportação completa com EPPlus: dados, estatísticas e distribuição de status
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">Análise IA com ML.NET</div>
+                    <div class="feature-desc">
+                        Treinamento FastTree, predição em tempo real e análise de importância de features
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-title">Análise Inteligente</div>
+                    <div class="feature-desc">
+                        Recomendações automatizadas com ROI calculado e melhor horário por material
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌙</div>
+                    <div class="feature-title">Dark Mode Cyberpunk</div>
+                    <div class="feature-desc">
+                        Tema escuro estilo futurista com cores neon e transição suave
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <div class="feature-title">Persistência de Dados</div>
+                    <div class="feature-desc">
+                        Salvamento automático de configurações, calibrações e preferências
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STACK TECNOLÓGICA -->
+        <section class="section">
+            <h2 class="section-title">🛠️ Stack Tecnológica</h2>
+            
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">💻 Plataforma Principal</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">C# 10</div>
+                    <div class="tech-badge">WPF (Windows Presentation Foundation)</div>
+                    <div class="tech-badge">.NET Framework 4.8</div>
+                    <div class="tech-badge">Visual Studio 2022</div>
+                    <div class="tech-badge">x64 Architecture</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">📊 Visualização de Dados</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">LiveCharts.Wpf 0.9.7</div>
+                    <div class="tech-badge">XAML Data Binding</div>
+                    <div class="tech-badge">ObservableCollection</div>
+                    <div class="tech-badge">INotifyPropertyChanged</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">🤖 Machine Learning</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">ML.NET 5.0.0</div>
+                    <div class="tech-badge">Microsoft.ML.FastTree 5.0.0</div>
+                    <div class="tech-badge">Binary Classification</div>
+                    <div class="tech-badge">FastTree Algorithm</div>
+                    <div class="tech-badge">Model Persistence (.zip)</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">📄 Geração de Documentos</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">EPPlus 8.5.0</div>
+                    <div class="tech-badge">Excel Export</div>
+                    <div class="tech-badge">System.Drawing.Common 8.0.0</div>
+                    <div class="tech-badge">Multi-Sheet Reports</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">🌐 Comunicação & APIs</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">HttpClient</div>
+                    <div class="tech-badge">REST API Integration</div>
+                    <div class="tech-badge">Newtonsoft.Json 13.0.4</div>
+                    <div class="tech-badge">Async/Await Pattern</div>
+                    <div class="tech-badge">ESP32 Communication</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">🎨 UI/UX</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">XAML Styles & Templates</div>
+                    <div class="tech-badge">Dynamic Resources</div>
+                    <div class="tech-badge">Custom Theme Manager</div>
+                    <div class="tech-badge">Animations & Transitions</div>
+                    <div class="tech-badge">Responsive Design</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARQUITETURA DA APLICAÇÃO -->
+        <section class="section">
+            <h2 class="section-title">🏗️ Arquitetura da Aplicação</h2>
+            
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem;">📂 Estrutura de Classes</h3>
+                <div class="code-block">
+<code>PrintSense/
+├── MainWindow.xaml.cs          # Classe principal da aplicação
+├── ThemeManager.cs             # Gerenciador de temas Light/Dark
+├── Models/
+│   ├── SensorData              # Dados do ESP32
+│   ├── SensorReading           # Leitura histórica
+│   ├── AppSettings             # Configurações persistentes
+│   ├── CalibrationSettings     # Offsets de calibração
+│   ├── ModelInput              # Input para ML.NET
+│   └── ModelOutput             # Predição do modelo
+├── Resources/
+│   ├── calibration.json        # Offsets de sensores
+│   ├── settings.json           # Configurações gerais
+│   ├── theme.json              # Tema selecionado
+│   └── printsense_model.zip    # Modelo ML treinado
+└── Assets/
+    └── (ícones e recursos visuais)</code>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem;">🔄 Fluxo de Dados</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">1. Inicialização</div>
+                        <div class="timeline-desc">
+                            Carrega tema, configurações, calibrações e modelo ML. Inicializa gráficos e timer.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2. Conexão ESP32</div>
+                        <div class="timeline-desc">
+                            HttpClient envia GET para http://IP:PORT/api/data a cada intervalo configurado (padrão: 1s).
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">3. Processamento</div>
+                        <div class="timeline-desc">
+                            Deserializa JSON → Aplica calibração → Atualiza UI → Adiciona ao histórico → Atualiza gráficos.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">4. Machine Learning</div>
+                        <div class="timeline-desc">
+                            Se modelo treinado: faz predição em tempo real. Se não: permite treinar com dados históricos.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">5. Análise Inteligente</div>
+                        <div class="timeline-desc">
+                            Processa leituras, identifica padrões, calcula ROI e gera recomendações automatizadas.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">6. Exportação</div>
+                        <div class="timeline-desc">
+                            EPPlus gera Excel com sheets: Dados completos + Estatísticas + Distribuição de status.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DETALHES TÉCNICOS -->
+        <section class="section">
+            <h2 class="section-title">🔍 Detalhes Técnicos Importantes</h2>
+            
+            <div class="card">
+                <h3 style="color: var(--secondary); font-size: 1.3rem; margin-bottom: 1rem;">⚡ Otimizações Implementadas</h3>
+                <ul>
+                    <li><span class="highlight">Gráficos sem Flickering:</span> UpdateCharts() usa .Clear() + .Add() ao invés de recriar ChartValues</li>
+                    <li><span class="highlight">HttpClient Reutilizável:</span> Recriado apenas quando timeout muda (evita InvalidOperationException)</li>
+                    <li><span class="highlight">Async/Await Pattern:</span> Todas operações HTTP são assíncronas (sem travar UI)</li>
+                    <li><span class="highlight">Null Checks:</span> Validações em LoadSettings, RunAdvancedAnalysis e métodos de atualização de UI</li>
+                    <li><span class="highlight">Dynamic Resources:</span> Cores do tema usam {DynamicResource} para mudança em tempo real</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--secondary); font-size: 1.3rem; margin-bottom: 1rem;">🐛 Correções Críticas Realizadas</h3>
+                <ul>
+                    <li><span class="accent-text">Ambiguidade System.Drawing.Brushes vs System.Windows.Media.Brushes:</span> Resolvido com namespace completo</li>
+                    <li><span class="accent-text">HttpClient.Timeout após primeira requisição:</span> Implementado dispose + recreate pattern</li>
+                    <li><span class="accent-text">Average() em sequência vazia:</span> Adicionado checks antes de LINQ aggregations</li>
+                    <li><span class="accent-text">NullReferenceException em LoadSettings:</span> _updateTimer criado antes de LoadSettings()</li>
+                    <li><span class="accent-text">Gráficos piscando:</span> Mudado de recreate para update dos ChartValues existentes</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--secondary); font-size: 1.3rem; margin-bottom: 1rem;">📡 API Integration Details</h3>
+                <div class="code-block">
+<code>// Endpoints ESP32
+GET  /api/data                    → SensorData JSON
+POST /api/material                → Muda material (PLA/PETG/ABS/RESINA)
+GET  /api/logs                    → Lista de logs disponíveis
+GET  /api/log?file=FILENAME.csv   → Download do CSV
+
+// Exemplo SensorData JSON
+{
+  "temperature": 25.3,
+  "humidity": 65.2,
+  "light": 450,
+  "soundDB": 45.8,
+  "status": "IDEAL",
+  "material": "PLA",
+  "ledStatus": "GREEN",
+  "thresholds": {
+    "tempMin": 18, "tempMax": 28,
+    "humMin": 40, "humMax": 70
+  }
+}</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- FUNCIONALIDADES POR TAB -->
+        <section class="section">
+            <h2 class="section-title">📑 Funcionalidades Detalhadas por Tab</h2>
+            
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">📊 Tab 1: Dashboard</h3>
+                <ul>
+                    <li><span class="highlight">3 Gráficos LiveCharts:</span> Temperatura, Umidade e Som (últimas 20 leituras)</li>
+                    <li><span class="highlight">Cards de Sensores:</span> Valores atuais + ranges ideais + status (OK/Warning/Error)</li>
+                    <li><span class="highlight">Indicador LED:</span> Verde/Amarelo/Vermelho sincronizado com ESP32</li>
+                    <li><span class="highlight">Status Geral:</span> IDEAL (verde) | BOM (laranja) | RUIM (vermelho) com descrição</li>
+                    <li><span class="highlight">Atualização em Tempo Real:</span> Timer configurável (padrão: 1 segundo)</li>
+                    <li><span class="highlight">Seleção de Material:</span> PLA, PETG, ABS, Resina com thresholds específicos</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">🔧 Tab 2: Calibração</h3>
+                <ul>
+                    <li><span class="highlight">Sliders de Offset:</span> Temperatura (±5°C) e Umidade (±20%)</li>
+                    <li><span class="highlight">Preview em Tempo Real:</span> Mostra valores calibrados vs. brutos</li>
+                    <li><span class="highlight">Persistência JSON:</span> Salva em calibration.json automaticamente</li>
+                    <li><span class="highlight">Reset Rápido:</span> Botão para zerar todos os offsets</li>
+                    <li><span class="highlight">Aplicação Imediata:</span> Calibrações aplicadas em todas as leituras subsequentes</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">⚙️ Tab 3: Configurações Avançadas</h3>
+                <ul>
+                    <li><span class="highlight">Conexão ESP32:</span> IP, Porta, Timeout (com validação)</li>
+                    <li><span class="highlight">Intervalo de Atualização:</span> Slider 0.5s - 10s</li>
+                    <li><span class="highlight">Teste de Conexão:</span> Botão para validar antes de salvar</li>
+                    <li><span class="highlight">Persistência Automática:</span> Salva em settings.json</li>
+                    <li><span class="highlight">Reconexão Inteligente:</span> Desconecta automaticamente se IP/Porta mudarem</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">📋 Tab 4: Relatórios</h3>
+                <ul>
+                    <li><span class="highlight">Estatísticas Completas:</span> Min/Avg/Max para cada sensor</li>
+                    <li><span class="highlight">Distribuição de Status:</span> Contagem e % de IDEAL/BOM/RUIM</li>
+                    <li><span class="highlight">Exportação Excel (EPPlus):</span> 2 sheets (Dados + Estatísticas)</li>
+                    <li><span class="highlight">Formatação Profissional:</span> Headers azuis, bordas, auto-width</li>
+                    <li><span class="highlight">Timestamp Completo:</span> Todas leituras com data/hora</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem;">🧠 Tab 5: Análise Inteligente</h3>
+                <ul>
+                    <li><span class="highlight">Treinamento ML.NET FastTree:</span> 100 árvores, 20 folhas</li>
+                    <li><span class="highlight">Features:</span> Temperatura, Umidade, Luz, Som</li>
+                    <li><span class="highlight">Label:</span> Binary (IDEAL/BOM = true, RUIM = false)</li>
+                    <li><span class="highlight">Predição em Tempo Real:</span> Avalia cada leitura com confiança %</li>
+                    <li><span class="highlight">Importância de Features:</span> Barras visuais (Temp > Hum > Som > Luz)</li>
+                    <li><span class="highlight">Análise Avançada:</span> Identifica melhor horário, calcula ROI de equipamentos</li>
+                    <li><span class="highlight">Recomendações Automatizadas:</span> Ar-condicionado, Desumidificador, Isolamento Acústico</li>
+                    <li><span class="highlight">Taxa de Sucesso por Material:</span> PLA, PETG, ABS com barras de progresso</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- THEME SYSTEM -->
+        <section class="section">
+            <h2 class="section-title">🌙 Sistema de Temas</h2>
+            
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem;">💡 Light Mode</h3>
+                <div class="code-block">
+<code>// Paleta Light Mode
+WindowBackground:   #F5F5F5 (cinza claro)
+CardBackground:     #FFFFFF (branco)
+HeaderBackground:   #667EEA (roxo/azul)
+AccentColor:        #667EEA
+PrimaryText:        #333333 (preto suave)
+SecondaryText:      #666666 (cinza médio)
+BorderColor:        #E0E0E0 (cinza claro)</code>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem;">🌙 Dark Mode (Cyberpunk)</h3>
+                <div class="code-block">
+<code>// Paleta Dark Mode Cyberpunk
+WindowBackground:   #050817 (preto espacial)
+CardBackground:     rgba(15, 20, 45, 0.8) (azul escuro translúcido)
+HeaderBackground:   rgba(10, 14, 39, 0.9) (azul escuro)
+AccentColor:        #00d9ff (cyan neon)
+PrimaryText:        #e0f7ff (cyan claro)
+SecondaryText:      #00ff88 (verde neon)
+BorderColor:        rgba(0, 217, 255, 0.3) (cyan translúcido)
+ShadowColor:        rgba(0, 217, 255, 0.4) (glow cyan)
+
+// Status Colors
+SuccessColor:       #00ff88 (verde neon)
+WarningColor:       #ffd700 (dourado)
+ErrorColor:         #ff3366 (rosa neon)</code>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--secondary); font-size: 1.3rem; margin-bottom: 1rem;">⚙️ Implementação Técnica</h3>
+                <ul>
+                    <li><span class="highlight">ThemeManager.cs:</span> Classe estática com LoadTheme, SaveTheme, ApplyTheme</li>
+                    <li><span class="highlight">Persistência:</span> theme.json armazena Light/Dark selecionado</li>
+                    <li><span class="highlight">Dynamic Resources:</span> Todos os estilos usam {DynamicResource} para mudança em tempo real</li>
+                    <li><span class="highlight">Toggle Button:</span> Muda ícone (🌙 Dark ⟺ ☀️ Light) e aplica tema instantaneamente</li>
+                    <li><span class="highlight">Carregamento Automático:</span> Restaura tema preferido ao iniciar aplicação</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- REQUISITOS -->
+        <section class="section">
+            <h2 class="section-title">💻 Requisitos do Sistema</h2>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Sistema Operacional</h3>
+                    <ul>
+                        <li>Windows 10 (64-bit)</li>
+                        <li>Windows 11 (64-bit)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Software Necessário</h3>
+                    <ul>
+                        <li>.NET Framework 4.8</li>
+                        <li>Visual Studio 2022 (para desenvolvimento)</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Hardware</h3>
+                    <ul>
+                        <li>Processador: x64</li>
+                        <li>RAM: 4 GB (mínimo)</li>
+                        <li>Espaço: 100 MB</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Conectividade</h3>
+                    <ul>
+                        <li>Rede Local (WiFi/Ethernet)</li>
+                        <li>ESP32 conectado na mesma rede</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROADMAP FUTURO -->
+        <section class="section">
+            <h2 class="section-title">🚀 Possíveis Melhorias Futuras</h2>
+            
+            <div class="grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">App Mobile</div>
+                    <div class="feature-desc">Versão Xamarin/MAUI para monitoramento remoto</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">☁️</div>
+                    <div class="feature-title">Cloud Sync</div>
+                    <div class="feature-desc">Backup automático em Azure/AWS</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <div class="feature-title">Notificações Push</div>
+                    <div class="feature-desc">Alertas quando status = RUIM</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Dashboard Web</div>
+                    <div class="feature-desc">Interface Blazor para acesso remoto</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🗄️</div>
+                    <div class="feature-title">Banco de Dados</div>
+                    <div class="feature-desc">SQLite/PostgreSQL para big data</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Multi-Usuário</div>
+                    <div class="feature-desc">Autenticação e permissões</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREENSHOTS -->
+        <section class="section">
+            <h2 class="section-title">📸 Screenshots da Aplicação</h2>
+            
+            <div class="screenshot-placeholder">
+                <p>🖼️ Dashboard - Light Mode</p>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <p>🌙 Dashboard - Dark Mode Cyberpunk</p>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <p>🔧 Tab Calibração</p>
+            </div>
+
+            <div class="screenshot-placeholder">
+                <p>🧠 Tab Análise Inteligente com ROI</p>
+            </div>
+        </section>
+
+        <!-- CONCLUSÃO -->
+        <section class="section">
+            <h2 class="section-title">✨ Conclusão</h2>
+            
+            <div class="card">
+                <p style="font-size: 1.1rem; line-height: 1.8;">
+                    O <span class="highlight">PrintSense Desktop App</span> representa uma solução completa e profissional 
+                    para monitoramento de ambientes de impressão 3D, combinando tecnologias modernas como 
+                    <span class="highlight">WPF</span>, <span class="highlight">ML.NET</span>, e 
+                    <span class="highlight">LiveCharts</span> com uma arquitetura robusta e escalável.
+                </p>
+                <br>
+                <p style="color: #b0d0e0; font-size: 1rem; line-height: 1.8;">
+                    A aplicação demonstra boas práticas de desenvolvimento .NET, incluindo async/await pattern, 
+                    data binding, MVVM principles, dependency management, error handling, e persistência de dados. 
+                    O sistema de temas com Dark Mode cyberpunk adiciona um diferencial visual único, 
+                    enquanto a análise de Machine Learning proporciona insights preditivos valiosos.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>🖨️ <strong>PrintSense Desktop Application</strong> | Desenvolvido com C# WPF + ML.NET</p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">Documentação Técnica Completa v1.0</p>
+    </footer>
+</body>
+</html>
