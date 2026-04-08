@@ -206,7 +206,7 @@ Ver: [docs/WEB_TROUBLESHOOTING.md](docs/WEB_TROUBLESHOOTING.md)
 - Danielle Costa - Dados
 - Letícia Santos - Docs
 - Jonathan Silva - QA
-- Willians Souza - Hardware / Modelagem 3D
+- Willians Souza - Hardware
 
 **Orientadora:** Profa. Danielly Soares
 
