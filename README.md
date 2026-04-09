@@ -714,10 +714,10 @@ furnished to do so, subject to the following conditions:
 
 ## 📞 Contato
 
-**Equipe PrintSense**
+**Equipe PrintSense PI4 - UNIVESP 2026**
 
-- 📧 Email: printsense@example.com
-- 🌐 Website: https://printsense.io
+- 📧 Email: brunohsso1@gmail.com
+- 🌐 Website: [https://printsense.io](https://brunohss.github.io/PI5/PI-5-v4.0.html)
 - 💬 Discord: https://discord.gg/printsense
 - 📱 Twitter: [@printsense](https://twitter.com/printsense)
 
@@ -730,15 +730,13 @@ furnished to do so, subject to the following conditions:
 - Microsoft .NET Team
 - Todos os contribuidores open-source
 
+
 ---
 
 <div align="center">
 
-**Desenvolvido com ❤️ pela Equipe PrintSense**
+**Desenvolvido com ❤️ pela Equipe UNIVESP**
 
-[![Stars](https://img.shields.io/github/stars/seu-usuario/printsense?style=social)](https://github.com/seu-usuario/printsense/stargazers)
-[![Forks](https://img.shields.io/github/forks/seu-usuario/printsense?style=social)](https://github.com/seu-usuario/printsense/network/members)
-[![Issues](https://img.shields.io/github/issues/seu-usuario/printsense)](https://github.com/seu-usuario/printsense/issues)
 
 [⬆ Voltar ao topo](#-printsense)
 
