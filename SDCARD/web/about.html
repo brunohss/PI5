@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sobre o Projeto - PrintSense</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Outfit", sans-serif;
+        background: linear-gradient(135deg, #050817, #0a0e27);
+        color: #e0f7ff;
+      }
+
+      header {
+        background: rgba(10, 14, 39, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--primary);
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 60px 20px;
+      }
+
+      h1 {
+        font-size: 42px;
+        text-align: center;
+        background: linear-gradient(135deg, #00d9ff, #00ff88);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #8899aa;
+        margin-bottom: 50px;
+      }
+
+      .card {
+        background: rgba(15, 20, 45, 0.8);
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+        transition: 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        border-color: #00d9ff;
+      }
+
+      .card h2 {
+        color: #00d9ff;
+        margin-bottom: 10px;
+      }
+
+      .highlight {
+        color: #00ff88;
+        font-weight: bold;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .image-box {
+        width: 100%;
+        height: 200px;
+        border: 2px dashed rgba(0, 217, 255, 0.3);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8899aa;
+        font-size: 14px;
+        margin-top: 15px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 30px;
+        color: #8899aa;
+        font-size: 14px;
+      }
+
+      body.light-mode {
+        background: #f5f5f5;
+        color: #000;
+      }
+
+      body.light-mode .card {
+        background: #fff;
+        color: #000;
+      }
+
+      body.light-mode h1 {
+        -webkit-text-fill-color: black;
+      }
+       .btn {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid var(--primary);
+        background: rgba(0, 217, 255, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .btn:hover {
+        background: rgba(0, 217, 255, 0.2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>About Us</h1>
+      <button
+        class="btn"
+        style="width: auto"
+        onclick="window.location.href = 'index.html'"
+      >
+        ⬅ Voltar
+      </button>
+    </header>
+
+    <div class="container">
+      <h1>Sobre o Projeto PrintSense</h1>
+      <p class="subtitle">
+        Monitoramento inteligente para qualidade em impressão 3D
+      </p>
+
+      <div class="card">
+        <h2>📌 Sobre o Projeto</h2>
+        <p>
+          O <span class="highlight">PrintSense</span> é um projeto desenvolvido
+          para monitorar o ambiente de impressão 3D, garantindo que fatores
+          críticos como temperatura, umidade, luminosidade e nível de ruído
+          estejam sempre dentro dos padrões ideais.
+        </p>
+
+        <p>
+          A proposta do sistema é evitar falhas nas impressões, aumentar a
+          durabilidade dos materiais e melhorar a qualidade final das peças
+          produzidas. Com isso, o projeto contribui diretamente para um processo
+          mais eficiente, seguro e automatizado.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>⚙️ Como Funciona</h2>
+        <p>
+          O PrintSense utiliza sensores conectados a um microcontrolador que
+          coleta dados ambientais em tempo real. Essas informações são enviadas
+          para uma interface web, onde o usuário pode acompanhar gráficos,
+          histórico e indicadores de qualidade.
+        </p>
+
+        <p>
+          Além disso, o sistema permite selecionar diferentes tipos de materiais
+          (PLA, ABS, PETG, Resina), ajustando automaticamente os parâmetros
+          ideais para cada situação.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>🖨️ Estrutura do Projeto</h2>
+        <div class="grid">
+          <div>
+            <p><strong>Impressora 3D</strong></p>
+            <div class="image-box">📷 Espaço para imagem da impressora</div>
+          </div>
+
+          <div>
+            <p><strong>Sensores e Hardware</strong></p>
+            <div class="image-box">📷 Espaço para sensores e componentes</div>
+          </div>
+
+          <div>
+            <p><strong>Peças Produzidas</strong></p>
+            <div class="image-box">📷 Espaço para peças impressas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🎯 Objetivo</h2>
+        <p>
+          O objetivo do projeto é proporcionar maior controle sobre o ambiente
+          de impressão, reduzindo erros, otimizando recursos e garantindo maior
+          qualidade nas peças produzidas. Além disso, o PrintSense também serve
+          como uma aplicação prática de conhecimentos em IoT, desenvolvimento
+          web e análise de dados.
+        </p>
+      </div>
+    </div>
+
+    <footer>© 2026 PrintSense — Projeto de Engenharia da Computação</footer>
+  </body>
+</html>

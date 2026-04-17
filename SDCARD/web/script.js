@@ -29,10 +29,21 @@ const materials = {
 };
 
 // ========== INICIALIZAÇÃO DO GRÁFICO ==========
+function getChartColors() {
+  const isLight = document.body.classList.contains("light-mode");
+
+  return {
+    text: isLight ? "#000" : "#e0f7ff",
+    grid: isLight ? "rgba(0,0,0,0.15)" : "rgba(0,217,255,0.1)",
+  };
+}
+
 function initChart() {
-  const ctx = document.getElementById('historyChart');
+  const ctx = document.getElementById("historyChart");
   if (!ctx) return;
-  
+
+  const colors = getChartColors();
+
   historyChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -468,6 +479,25 @@ function showNotification(message, type = 'info') {
 }
 
 // ========== ESTILOS MODAIS ==========
+function toggleTheme() {
+  document.body.classList.toggle("light-mode");
+
+  const isLight = document.body.classList.contains("light-mode");
+  localStorage.setItem("theme", isLight ? "light" : "dark");
+
+  if (historyChart) {
+    const colors = getChartColors();
+
+    historyChart.options.plugins.legend.labels.color = colors.text;
+    historyChart.options.scales.x.ticks.color = colors.text;
+    historyChart.options.scales.y.ticks.color = colors.text;
+    historyChart.options.scales.x.grid.color = colors.grid;
+    historyChart.options.scales.y.grid.color = colors.grid;
+
+    historyChart.update();
+  }
+}
+
 function addModalStyles() {
   if (document.getElementById('modal-styles')) return;
   
@@ -540,7 +570,7 @@ function addModalStyles() {
     .log-item:hover {
       background: rgba(0, 217, 255, 0.1);
       border-color: #00d9ff;
-      transform: translateX(5px);
+      box-shadow: 5px 0 15px rgba(0, 217, 255, 0.3);
     }
     
     .log-name {
@@ -596,8 +626,24 @@ function addModalStyles() {
       background: linear-gradient(135deg, #00d9ff, #0066ff);
       color: #050817;
     }
+
+    body.light-mode .modal-content {
+      background: white;
+      color: black;
+    }
+
+    body:not(.light-mode) .modal-content {
+      background: #0f142d;
+      color: #e0f7ff;
+    }
+
+    .log-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+    }
   `;
-  
+
   document.head.appendChild(style);
 }
 
@@ -609,18 +655,16 @@ document.addEventListener('DOMContentLoaded', function() {
   updateData();
   setInterval(updateData, 2000);
   addModalStyles();
-  
-  window.onclick = function(event) {
-    const modal = document.getElementById('logsModal');
-    if (event.target === modal) {
-      closeLogsModal();
-    }
-  };
+
+  const saved = localStorage.getItem("theme");
+  if (saved === "light") {
+    document.body.classList.add("light-mode");
+  }
 });
 
 // ========== EXPORTAR FUNÇÕES ==========
-window.changeMaterial = changeMaterial;
+window.toggleTheme = toggleTheme;
 window.showLogs = showLogs;
 window.closeLogsModal = closeLogsModal;
 window.downloadLog = downloadLog;
-window.downloadToday = downloadToday;
+window.changeMaterial = changeMaterial;

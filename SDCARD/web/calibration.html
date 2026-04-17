@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrintSense - Calibração</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --primary: #00d9ff;
+        --secondary: #00ff88;
+        --accent: #ff3366;
+        --darker: #050817;
+        --card-bg: rgba(15, 20, 45, 0.8);
+      }
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background: var(--darker);
+        color: #e0f7ff;
+      }
+
+      header {
+        background: rgba(10, 14, 39, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--primary);
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      h1 {
+        font-family: "Orbitron", sans-serif;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 2rem;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 20px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        background: #0a0e27;
+        color: #fff;
+      }
+
+      .btn {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid var(--primary);
+        background: rgba(0, 217, 255, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .btn:hover {
+        background: rgba(0, 217, 255, 0.2);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>🧪 CALIBRAÇÃO</h1>
+      <button
+        class="btn"
+        style="width: auto"
+        onclick="window.location.href = 'index.html'"
+      >
+        ⬅ Voltar
+      </button>
+    </header>
+
+    <div class="container">
+      <!-- TEMPERATURA -->
+      <div class="card">
+        <h2>🌡️ Temperatura</h2>
+        <div class="grid">
+          <div>
+            <label>Offset</label>
+            <input type="number" id="tempOffset" />
+          </div>
+        </div>
+      </div>
+
+      <!-- UMIDADE -->
+      <div class="card">
+        <h2>💧 Umidade</h2>
+        <div class="grid">
+          <div>
+            <label>Offset</label>
+            <input type="number" id="humOffset" />
+          </div>
+        </div>
+      </div>
+
+      <!-- LUZ -->
+      <div class="card">
+        <h2>💡 Luminosidade</h2>
+        <div class="grid">
+          <div>
+            <label>Offset</label>
+            <input type="number" id="lightOffset" />
+          </div>
+        </div>
+      </div>
+
+      <!-- SOM -->
+      <div class="card">
+        <h2>🔊 Som</h2>
+        <div class="grid">
+          <div>
+            <label>Offset</label>
+            <input type="number" id="soundOffset" />
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="saveCalibration()">
+        💾 Salvar Calibração
+      </button>
+    </div>
+
+    <script>
+      const API = "http://localhost:8080";
+
+      function el(id) {
+        return document.getElementById(id);
+      }
+
+      // LOAD CALIBRATION
+      async function loadCalibration() {
+        try {
+          const res = await fetch(`${API}/api/calibration`);
+
+          if (!res.ok) throw new Error(res.status);
+
+          const data = await res.json();
+          console.log("CALIBRATION:", data);
+
+          el("tempOffset").value = data.tempOffset ?? 0;
+          el("humOffset").value = data.humOffset ?? 0;
+          el("lightOffset").value = data.lightOffset ?? 0;
+          el("soundOffset").value = data.soundOffset ?? 0;
+        } catch (e) {
+          console.error("Erro ao carregar calibração:", e);
+          alert("Erro ao carregar calibração");
+        }
+      }
+
+      // SAVE CALIBRATION
+      async function saveCalibration() {
+        const data = {
+          tempOffset: Number(el("tempOffset").value),
+          humOffset: Number(el("humOffset").value),
+          lightOffset: Number(el("lightOffset").value),
+          soundOffset: Number(el("soundOffset").value),
+        };
+
+        console.log("ENVIANDO:", data);
+
+        try {
+          const res = await fetch(`${API}/api/calibration`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (!res.ok) throw new Error();
+
+          alert("✅ Calibração salva com sucesso!");
+        } catch (e) {
+          console.error(e);
+          alert("❌ Erro ao salvar calibração");
+        }
+      }
+
+      // AUTO LOAD
+      window.addEventListener("DOMContentLoaded", loadCalibration);
+    </script>
+  </body>
+</html>

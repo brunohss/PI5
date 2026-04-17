@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Configurações Avançadas</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron&family=Outfit&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --primary: #00d9ff;
+        --secondary: #00ff88;
+        --bg: #050817;
+        --card: rgba(15, 20, 45, 0.8);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit";
+        background: var(--bg);
+        color: #e0f7ff;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 2px solid var(--primary);
+      }
+
+      header h2 {
+        font-family: "Orbitron";
+        color: var(--primary);
+      }
+
+      header button {
+        padding: 8px 15px;
+        border-radius: 10px;
+        border: 1px solid var(--primary);
+        background: transparent;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 2rem;
+      }
+
+      .card {
+        background: var(--card);
+        padding: 1.5rem;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+      }
+
+      .card h3 {
+        margin-bottom: 15px;
+        color: var(--secondary);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #00d9ff33;
+        background: #0a0e27;
+        color: #fff;
+        outline: none;
+      }
+
+      .btn {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px solid var(--primary);
+        background: rgba(0, 217, 255, 0.1);
+        color: var(--primary);
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .btn:hover {
+        background: var(--primary);
+        color: #000;
+      }
+
+      @media (max-width: 700px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h2>⚙️ CONFIG AVANÇADA</h2>
+      <button onclick="location.href = 'index.html'">⬅ Voltar</button>
+    </header>
+
+    <div class="container">
+      <div class="card">
+        <h3>📊 Ajuste de Limites</h3>
+
+        <div class="grid">
+          <div>
+            <label>Temperatura Mínima</label>
+            <input id="tempMin" placeholder="Temp Min" />
+          </div>
+
+          <div>
+            <label>Temperatura Máxima</label>
+            <input id="tempMax" placeholder="Temp Max" />
+          </div>
+
+          <div>
+            <label>Umidade Mínima</label>
+            <input id="humMin" placeholder="Umidade Min" />
+          </div>
+
+          <div>
+            <label>Umidade Máxima</label>
+            <input id="humMax" placeholder="Umidade Max" />
+          </div>
+
+          <div>
+            <label>Luz Máxima</label>
+            <input id="lightMax" placeholder="Luz Max" />
+          </div>
+
+          <div>
+            <label>Ruído Máximo (dB)</label>
+            <input id="soundMax" placeholder="Ruído Max" />
+          </div>
+        </div>
+
+        <button class="btn" onclick="saveConfig()">
+          💾 Salvar Configuração
+        </button>
+      </div>
+
+      <!-- <div class="card">
+        <h3>📦 Material Customizado</h3>
+
+        <input id="matName" placeholder="Nome material" />
+
+        <div class="grid">
+          <input id="mTempMin" placeholder="Temp Min" />
+          <input id="mTempMax" placeholder="Temp Max" />
+          <input id="mHumMin" placeholder="Hum Min" />
+          <input id="mHumMax" placeholder="Hum Max" />
+        </div>
+
+        <button class="btn" onclick="saveMaterial()">Salvar Material</button>
+      </div> -->
+
+      <div class="card">
+        <h3>⚙️ Sistema</h3>
+
+        <div>
+          <label>Nome da Máquina</label>
+          <input id="machineName" placeholder="Nome da máquina" />
+        </div>
+
+        <div>
+          <label>Intervalo de Leitura (segundos)</label>
+          <input id="interval" placeholder="Intervalo (segundos)" />
+        </div>
+
+        <div>
+          <label>Limite de Alertas</label>
+          <input id="alertLimit" placeholder="Limite de alertas" />
+        </div>
+
+        <div>
+          <label>Status dos Logs</label>
+          <select id="logs">
+            <option value="true">Logs ON</option>
+            <option value="false">Logs OFF</option>
+          </select>
+        </div>
+        <button class="btn" onclick="saveSystem()">Salvar Sistema</button>
+      </div>
+    </div>
+
+    <script>
+      const API = "http://localhost:8080";
+
+      function el(id) {
+        return document.getElementById(id);
+      }
+
+      // LOAD
+      async function loadConfig() {
+        try {
+          const res = await fetch(`${API}/api/config`);
+
+          if (!res.ok) throw new Error(res.status);
+
+          const data = await res.json();
+          console.log("CONFIG:", data);
+
+          el("tempMin").value = data.temperatura?.min ?? data.tempMin ?? "";
+          el("tempMax").value = data.temperatura?.max ?? data.tempMax ?? "";
+
+          el("humMin").value = data.umidade?.min ?? data.humMin ?? "";
+          el("humMax").value = data.umidade?.max ?? data.humMax ?? "";
+
+          el("lightMax").value = data.luz?.max ?? data.lightMax ?? "";
+          el("soundMax").value = data.ruido?.max ?? data.soundMaxDB ?? "";
+
+          //   el("machineName").value = data.nome ?? data.machineName ?? "";
+          //   el("interval").value = data.intervalo ?? data.interval ?? "";
+          //   el("alertLimit").value = data.alertas ?? data.alertLimit ?? "";
+
+          //   el("logs").value = String(data.logs ?? true);
+        } catch (err) {
+          console.error("ERRO LOAD:", err);
+          alert("Erro ao carregar configuração");
+        }
+      }
+
+      async function loadSystem() {
+        try {
+          const res = await fetch(`${API}/api/system`);
+          const data = await res.json();
+
+          el("machineName").value = data.machineName || "";
+          el("interval").value = data.interval || 0;
+          el("alertLimit").value = data.alertLimit || 0;
+          el("logs").value = data.logs ? "true" : "false";
+        } catch (e) {
+          console.error("Erro ao carregar system:", e);
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", loadConfig);
+      window.addEventListener("DOMContentLoaded", loadSystem);
+
+      // SAVE CONFIG
+      async function saveConfig() {
+        const config = {
+          tempMin: Number(el("tempMin").value),
+          tempMax: Number(el("tempMax").value),
+          humMin: Number(el("humMin").value),
+          humMax: Number(el("humMax").value),
+          lightMax: Number(el("lightMax").value),
+          soundMaxDB: Number(el("soundMax").value),
+        };
+
+        console.log("ENVIANDO:", config);
+
+        try {
+          const res = await fetch(`${API}/api/config`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config),
+          });
+
+          if (!res.ok) throw new Error();
+
+          alert("✅ Salvo com sucesso!");
+        } catch (e) {
+          console.error("ERRO SAVE:", e);
+          alert("❌ Erro ao salvar");
+        }
+      }
+
+      async function saveSystem() {
+        const config = {
+          machineName: el("machineName").value,
+          interval: Number(el("interval").value),
+          logs: el("logs").value === "true",
+          alertLimit: Number(el("alertLimit").value),
+        };
+
+        console.log("ENVIANDO:", config);
+
+        try {
+          const res = await fetch(`${API}/api/system`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(config),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            throw new Error(data.error || "Erro ao salvar");
+          }
+
+          alert("✅ Sistema salvo com sucesso!");
+        } catch (e) {
+          console.error("ERRO SAVE:", e);
+          alert("❌ Erro ao salvar sistema");
+        }
+      }
+
+      // SAVE MATERIAL
+      async function saveMaterial() {
+        const nome = el("matName").value.trim().toUpperCase();
+
+        if (!nome) {
+          alert("Digite o nome do material");
+          return;
+        }
+
+        const material = {
+          [nome]: {
+            tempMin: Number(el("mTempMin").value),
+            tempMax: Number(el("mTempMax").value),
+            humMin: Number(el("mHumMin").value),
+            humMax: Number(el("mHumMax").value),
+            lightMax: Number(el("lightMax").value || 0),
+            soundMaxDB: Number(el("soundMax").value || 0),
+          },
+        };
+
+        console.log("ENVIANDO MATERIAL:", material);
+
+        try {
+          const res = await fetch(`${API}/api/material`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(material),
+          });
+
+          if (!res.ok) throw new Error();
+
+          alert("✅ Material salvo!");
+        } catch (e) {
+          console.error(e);
+          alert("❌ Erro ao salvar material");
+        }
+      }
+    </script>
+  </body>
+</html>
