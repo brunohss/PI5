@@ -133,6 +133,19 @@
       .btn:hover {
         background: rgba(0, 217, 255, 0.2);
       }
+
+      .image-box {
+        width: 100%;
+        height: 200px; /* altura padrão */
+        overflow: hidden; /* corta o excesso */
+      }
+
+      .image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* mantém proporção e preenche */
+        border-radius: 12px;
+      }
       
       .light-mode {
         --primary: #0066ff;
@@ -221,17 +234,23 @@
         <div class="grid">
           <div>
             <p><strong>Impressora 3D</strong></p>
-            <div class="image-box">📷 Espaço para imagem da impressora</div>
+              <div class="image-box">
+                <img src="impressora-3D.jpeg" alt="📷 Espaço para imagem da impressora" width="100">
+              </div>
           </div>
 
           <div>
             <p><strong>Sensores e Hardware</strong></p>
-            <div class="image-box">📷 Espaço para sensores e componentes</div>
+              <div class="image-box">
+                <img src="protótipo.jpeg" alt="📷 Espaço para sensores e componentes" width="100">
+              </div>
           </div>
 
           <div>
             <p><strong>Peças Produzidas</strong></p>
-            <div class="image-box">📷 Espaço para peças impressas</div>
+              <div class="image-box">
+                <img src="peça-impressa.jpeg" alt="📷 Espaço para peças impressas" width="100">
+              </div>
           </div>
         </div>
       </div>
