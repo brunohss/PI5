@@ -52,7 +52,7 @@
       }
 
       .container {
-        max-width: 1100px;
+        /* max-width: 1100px; */
         margin: auto;
         padding: 2rem;
       }
@@ -95,7 +95,7 @@
         background: rgba(0, 217, 255, 0.1);
         color: var(--primary);
         cursor: pointer;
-        width: 100%;
+        width: 50%;
       }
 
       .btn:hover {
@@ -108,13 +108,43 @@
           grid-template-columns: 1fr;
         }
       }
+      .light-mode {
+        --primary: #0066ff;
+        --secondary: #00aa66;
+        --card: rgba(255, 255, 255, 0.9); 
+        color: #1a1a1a;
+      }
+
+      .light-mode .container{
+        background-color:  rgba(255, 255, 255, 0.9); ;
+      }
+      .light-mode input, .light-mode select {
+        background: #fff;
+        color: #000;
+      }
+
+      .light-mode .card {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
     </style>
   </head>
 
   <body>
-    <header>
+     <header>
       <h2>⚙️ CONFIG AVANÇADA</h2>
-      <button onclick="location.href = 'index.html'">⬅ Voltar</button>
+        <div style="display: flex;gap: 20px; width: 30%;">
+          <button onclick="toggleTheme()" class="btn btn-secondary" 
+          aria-label="Alternar entre tema escuro e claro" type="button">
+          🌙 / ☀️
+        </button>
+        <button
+          class="btn"
+          style="width: auto"
+          onclick="window.location.href = 'index.html'"
+        >
+          ⬅ Voltar
+        </button>
+        </div>
     </header>
 
     <div class="container">
@@ -253,8 +283,11 @@
         }
       }
 
-      window.addEventListener("DOMContentLoaded", loadConfig);
-      window.addEventListener("DOMContentLoaded", loadSystem);
+      window.addEventListener("DOMContentLoaded", () => {
+        applySavedTheme();
+        loadConfig();
+        loadSystem();
+      });
 
       // SAVE CONFIG
       async function saveConfig() {
@@ -355,5 +388,6 @@
         }
       }
     </script>
+    <script src="/script.js"></script>
   </body>
 </html>
