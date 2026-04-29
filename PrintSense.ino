@@ -1,6 +1,6 @@
 /*
  * ═══════════════════════════════════════════════════════════════
- *                    PRINTSENSE v4.2 FreeRTOS
+ *                    PRINTSENSE v4.7 FreeRTOS
  * ═══════════════════════════════════════════════════════════════
  * 
  * Monitor Ambiental Profissional para Impressão 3D
@@ -45,10 +45,10 @@
  * 
  * AUTOR: Equipe PrintSense
  * DATA: 2026
- * VERSÃO: 4.2 FreeRTOS FINAL
+ * VERSÃO: 4.7 FreeRTOS FINAL
  * ═══════════════════════════════════════════════════════════════
  */
-
+#include <Preferences.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include "driver/sdmmc_host.h"
@@ -65,10 +65,11 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+
+
 // ==================== CONFIG WiFi ====================
 const char* ssid     = "ssid";
-const char* password = "password";
-
+const char* password = "password"; 
 // ==================== PINOS ====================
 #define DHTPIN 17
 #define DHT_TYPE DHT22
@@ -85,6 +86,44 @@ const char* password = "password";
 #define SD_D0_PIN  GPIO_NUM_40
 #define I2C_SDA 10
 #define I2C_SCL 13
+
+// ==================== STORAGE ====================
+Preferences preferences;
+
+// ==================== CALIBRAÇÃO ====================
+struct CalibrationData {
+  float tempOffset = 0.0;
+  float humOffset = 0.0;
+  float lightOffset = 0.0;
+  float soundOffset = 0.0;
+};
+
+CalibrationData calibration;
+
+// ==================== SYSTEM CONFIG ====================
+struct SystemConfig {
+  String machineName = "PrintSense 3D";
+  int interval = 2;
+  bool logs = true;
+  int alertLimit = 5;
+};
+
+SystemConfig systemConfig;
+
+// ==================== CONFIG CUSTOM ====================
+struct ConfigData {
+  float tempMin;
+  float tempMax;
+  float humMin;
+  float humMax;
+  int lightMax;
+  int soundMaxDB;
+};
+
+ConfigData customConfig;
+bool hasCustomConfig = false;
+
+
 
 // ==================== OBJETOS ====================
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -124,8 +163,8 @@ SensorData currentData;
 String currentMaterial = "PLA";
 int currentMaterialIndex = 0;
 
-const char* materialNames[] = {"PLA", "PETG", "ABS", "RESINA"};
-const int numMaterials = 4;
+const char* materialNames[] = {"PLA", "PETG", "ABS", "RESINA", "CUSTOM"};
+const int numMaterials = 5;
 
 MaterialThresholds materials[] = {
   {"PLA",    18.0, 28.0, 40.0, 60.0, 3000, 800, 70.0},
@@ -177,14 +216,14 @@ void taskSensors(void *parameter) {
     vTaskDelayUntil(&xLastWakeTime, xFrequency);
     
     SensorData newData;
-    newData.temperature = dht.readTemperature();
-    newData.humidity = dht.readHumidity();
+    newData.temperature = dht.readTemperature() + calibration.tempOffset;
+    newData.humidity = dht.readHumidity() + calibration.humOffset;
     if (isnan(newData.temperature)) newData.temperature = 0.0;
     if (isnan(newData.humidity)) newData.humidity = 0.0;
     
-    newData.light = analogRead(LDR_PIN);
+    newData.light = analogRead(LDR_PIN) + calibration.lightOffset;
     newData.soundADC = readSoundPeakToPeak();
-    newData.soundDB = convertToDBSPL(newData.soundADC);
+    newData.soundDB = convertToDBSPL(newData.soundADC) + calibration.soundOffset;
     newData.timestamp = millis();
     newData.status = calculateStatus(newData);
     newData.ledStatus = statusToLED(newData.status);
@@ -405,7 +444,7 @@ void handleEncoderStateMachine() {
 void updateLCDNormal(SensorData data) {
   lcd.clear();
   lcd.setCursor(0,0); lcd.print(currentMaterial);
-  lcd.setCursor(5,0); 
+  lcd.setCursor(7,0); 
   if(data.status=="IDEAL") lcd.print("* IDEAL");
   else if(data.status=="BOM") lcd.print("! BOM");
   else lcd.print("X RUIM");
@@ -464,9 +503,28 @@ String calculateStatus(SensorData data) {
 }
 
 MaterialThresholds getMaterialThresholds(String material) {
+
+  // 🔥 CASO CUSTOM
+  if (material == "CUSTOM" && hasCustomConfig) {
+    static MaterialThresholds custom;
+
+    custom.name = "CUSTOM";
+    custom.tempMin = customConfig.tempMin;
+    custom.tempMax = customConfig.tempMax;
+    custom.humMin  = customConfig.humMin;
+    custom.humMax  = customConfig.humMax;
+    custom.lightMax = customConfig.lightMax;
+    custom.soundMaxDB = customConfig.soundMaxDB;
+    custom.soundMaxADC = 800;
+
+    return custom;
+  }
+
+  // 🔹 materiais padrão
   for(int i=0; i<numMaterials; i++) {
     if(material == materials[i].name) return materials[i];
   }
+
   return materials[0];
 }
 
@@ -555,7 +613,9 @@ void setupWebServer() {
       doc["ledStatus"]=currentData.ledStatus; 
       doc["material"]=currentMaterial;
       doc["statusDetails"]="Condições " + String(currentData.status) + " para " + currentMaterial;
-      
+      doc["configSource"] = hasCustomConfig ? "custom" : "material";
+      doc["isCustom"] = (currentMaterial == "CUSTOM");
+
       MaterialThresholds mat = getMaterialThresholds(currentMaterial);
       doc["thresholds"]["tempMin"]=mat.tempMin; 
       doc["thresholds"]["tempMax"]=mat.tempMax;
@@ -571,7 +631,33 @@ void setupWebServer() {
     server.send(200, "application/json", response);
     Serial.println("[API] /api/data respondido");
   });
-  
+  // API - Dados do Sistema
+  server.on("/api/system", HTTP_GET, []() {
+    StaticJsonDocument<256> doc;
+    doc["machineName"] = systemConfig.machineName;
+    doc["interval"]    = systemConfig.interval;
+    doc["logs"]        = systemConfig.logs;
+    doc["alertLimit"]  = systemConfig.alertLimit;
+    String res;
+    serializeJson(doc, res);
+    server.send(200, "application/json", res);
+  });
+
+  server.on("/api/system", HTTP_POST, []() {
+  if (!server.hasArg("plain")) {
+    server.send(400, "application/json", "{\"error\":\"no body\"}");
+    return;
+  }
+  StaticJsonDocument<256> doc;
+  deserializeJson(doc, server.arg("plain"));
+  if (doc.containsKey("machineName")) systemConfig.machineName = doc["machineName"].as<String>();
+  if (doc.containsKey("interval"))    systemConfig.interval    = doc["interval"] | 2;
+  if (doc.containsKey("logs"))        systemConfig.logs        = doc["logs"] | true;
+  if (doc.containsKey("alertLimit"))  systemConfig.alertLimit  = doc["alertLimit"] | 5;
+  saveSystem();
+  server.send(200, "application/json", "{\"success\":true}");
+  });
+
   // API - Mudar material
   server.on("/api/material", HTTP_POST, []() {
     if(server.hasArg("plain")) {
@@ -588,7 +674,7 @@ void setupWebServer() {
         
         StaticJsonDocument<256> responseDoc;
         responseDoc["success"] = true;
-        responseDoc["newMaterial"] = currentMaterial;
+        responseDoc["material"] = currentMaterial;
         responseDoc["status"] = currentData.status;
         responseDoc["ledStatus"] = currentData.ledStatus;
         
@@ -601,6 +687,127 @@ void setupWebServer() {
     server.send(400, "application/json", "{\"success\":false}");
   });
   
+  // API - Mudar Calibration
+  server.on("/api/calibration", HTTP_GET, []() {
+    StaticJsonDocument<256> doc;
+
+    doc["tempOffset"] = calibration.tempOffset;
+    doc["humOffset"] = calibration.humOffset;
+    doc["lightOffset"] = calibration.lightOffset;
+    doc["soundOffset"] = calibration.soundOffset;
+
+    String res;
+    serializeJson(doc, res);
+    server.send(200, "application/json", res);
+});
+
+  server.on("/api/calibration", HTTP_POST, []() {
+
+    if (!server.hasArg("plain")) {
+      server.send(400, "application/json", "{\"error\":\"no body\"}");
+      return;
+    }
+
+    StaticJsonDocument<256> doc;
+    deserializeJson(doc, server.arg("plain"));
+    /*
+    if (doc["tempOffset"] >= -10 && doc["tempOffset"] <= 10)
+      calibration.tempOffset = doc["tempOffset"];
+
+    if (doc["humOffset"] >= -20 && doc["humOffset"] <= 20)
+      calibration.humOffset = doc["humOffset"];*/
+
+    int temp = doc["tempOffset"] | 0;
+    int hum  = doc["humOffset"] | 0;
+
+    if (temp >= -10 && temp <= 10)
+      calibration.tempOffset = temp;
+
+    if (hum >= -20 && hum <= 20)
+      calibration.humOffset = hum;
+
+    calibration.lightOffset = doc["lightOffset"] | 0;
+    calibration.soundOffset = doc["soundOffset"] | 0;
+
+    saveCalibration();
+
+    server.send(200, "application/json", "{\"success\":true}");
+  });
+
+  server.on("/api/calibration/reset", HTTP_POST, []() {
+    resetCalibration();
+    server.send(200, "application/json", "{\"reset\":true}");
+  });
+
+  // API - Mudar Config
+
+  server.on("/api/config", HTTP_GET, []() {
+    StaticJsonDocument<512> doc;
+    if (hasCustomConfig) {
+      doc["source"]     = "custom";
+      doc["tempMin"]    = customConfig.tempMin;
+      doc["tempMax"]    = customConfig.tempMax;
+      doc["humMin"]     = customConfig.humMin;
+      doc["humMax"]     = customConfig.humMax;
+      doc["lightMax"]   = customConfig.lightMax;
+      doc["soundMaxDB"] = customConfig.soundMaxDB;
+    } else {
+      // ANTES: só retornava "source":"material" sem os valores
+      // DEPOIS: retorna os valores do material ativo também
+      MaterialThresholds mat = getMaterialThresholds(currentMaterial);
+      doc["source"]     = "material";
+      doc["tempMin"]    = mat.tempMin;
+      doc["tempMax"]    = mat.tempMax;
+      doc["humMin"]     = mat.humMin;
+      doc["humMax"]     = mat.humMax;
+      doc["lightMax"]   = mat.lightMax;
+      doc["soundMaxDB"] = mat.soundMaxDB;
+    }
+    String res;
+    serializeJson(doc, res);
+    server.send(200, "application/json", res);
+  });
+
+  server.on("/api/config", HTTP_POST, []() {
+
+    StaticJsonDocument<512> doc;
+    if (deserializeJson(doc, server.arg("plain")) != DeserializationError::Ok) {
+      server.send(400, "application/json", "{\"error\":\"json inválido\"}");
+      return;
+    }
+
+    if (doc.containsKey("tempMin") && doc.containsKey("tempMax")) {
+  float tMin = doc["tempMin"];
+  float tMax = doc["tempMax"];
+
+      if (tMin < tMax) {
+        customConfig.tempMin = tMin;
+        customConfig.tempMax = tMax;
+        }
+    }
+
+    customConfig.humMin = doc["humMin"] | 40;
+    customConfig.humMax = doc["humMax"] | 60;
+    customConfig.lightMax = doc["lightMax"] | 3000;
+    customConfig.soundMaxDB = doc["soundMaxDB"] | 70;
+
+    saveConfig();
+
+    // 🔥 MUITO IMPORTANTE
+    currentMaterial = "CUSTOM";
+    currentMaterialIndex = 4;
+
+    server.send(200, "application/json", "{\"success\":true}");
+  });
+
+  server.on("/api/config/reset", HTTP_POST, []() {
+    resetConfig();
+
+    currentMaterial = "PLA";
+    currentMaterialIndex = 0;
+    server.send(200, "application/json", "{\"reset\":true}");
+    });
+
   // API - Listar logs
   server.on("/api/logs", HTTP_GET, []() {
     StaticJsonDocument<2048> doc;
@@ -697,8 +904,135 @@ void setupWebServer() {
     server.send(404, "text/plain", "style.css não encontrado");
   });
   
+  // Rota Imagens
+  
+  server.on("/A.jpeg", HTTP_GET, []() {
+    FILE* file = fopen("/sdcard/web/A.jpeg", "rb");
+
+    if (!file) {
+      server.send(404, "text/plain", "Imagem não encontrada");
+      return;
+    }
+
+    // pega tamanho
+    fseek(file, 0, SEEK_END);
+    size_t fileSize = ftell(file);
+    rewind(file);
+
+    WiFiClient client = server.client();
+
+    // 🔥 cabeçalho HTTP MANUAL
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: image/jpeg");
+    client.print("Content-Length: ");
+    client.println(fileSize);
+    client.println("Connection: close");
+    client.println();
+
+    // 🔥 envio binário
+    uint8_t buffer[1024];
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        client.write(buffer, bytesRead);
+      }
+
+      fclose(file);
+  });
+
+  server.on("/B.jpeg", HTTP_GET, []() {
+    FILE* file = fopen("/sdcard/web/B.jpeg", "rb");
+
+    if (!file) {
+      server.send(404, "text/plain", "Imagem não encontrada");
+      return;
+    }
+
+    // pega tamanho
+    fseek(file, 0, SEEK_END);
+    size_t fileSize = ftell(file);
+    rewind(file);
+
+    WiFiClient client = server.client();
+
+    // 🔥 cabeçalho HTTP MANUAL
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: image/jpeg");
+    client.print("Content-Length: ");
+    client.println(fileSize);
+    client.println("Connection: close");
+    client.println();
+
+    // 🔥 envio binário
+    uint8_t buffer[1024];
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        client.write(buffer, bytesRead);
+      }
+
+      fclose(file);
+  });
+
+  server.on("/C.jpeg", HTTP_GET, []() {
+    FILE* file = fopen("/sdcard/web/C.jpeg", "rb");
+
+    if (!file) {
+      server.send(404, "text/plain", "Imagem não encontrada");
+      return;
+    }
+
+    // pega tamanho
+    fseek(file, 0, SEEK_END);
+    size_t fileSize = ftell(file);
+    rewind(file);
+
+    WiFiClient client = server.client();
+
+    // 🔥 cabeçalho HTTP MANUAL
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: image/jpeg");
+    client.print("Content-Length: ");
+    client.println(fileSize);
+    client.println("Connection: close");
+    client.println();
+
+    // 🔥 envio binário
+    uint8_t buffer[1024];
+    size_t bytesRead;
+
+    while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0) {
+        client.write(buffer, bytesRead);
+      }
+
+      fclose(file);
+  });
+  
+
   // Handler para arquivos não encontrados (fallback para outros arquivos do SD)
   server.onNotFound([]() {
+    String uri = server.uri();
+      
+      // ← ADICIONAR ESTE BLOCO NO INÍCIO
+    if (uri.startsWith("/api/log/")) {
+      String filename = uri.substring(9);
+      String fullPath = "/sdcard/logs/" + filename;
+      if (sdCardAvailable) {
+        FILE* file = fopen(fullPath.c_str(), "r");
+        if (file) {
+          String content = "";
+          char buffer[256];
+          while (fgets(buffer, sizeof(buffer), file)) content += buffer;
+          fclose(file);
+          server.send(200, "text/csv", content);
+          return;
+        }
+        server.send(404, "text/plain", "Arquivo não encontrado");
+      } else {
+        server.send(503, "text/plain", "SD Card indisponível");
+      }
+      return;
+    }
     String path = "/sdcard/web" + server.uri();
     
     if(sdCardAvailable) {
@@ -733,6 +1067,107 @@ void setupWebServer() {
   Serial.println("✅ WebServer iniciado com todas as rotas!");
 }
 
+// ==================== CALIBRAÇÃO ====================
+
+void loadCalibration() {
+  preferences.begin("calib", true);
+
+  calibration.tempOffset = preferences.getFloat("tOff", 0.0);
+  calibration.humOffset = preferences.getFloat("hOff", 0.0);
+  calibration.lightOffset = preferences.getFloat("lOff", 0.0);
+  calibration.soundOffset = preferences.getFloat("sOff", 0.0);
+
+  preferences.end();
+
+  Serial.println("✅ Calibração carregada");
+}
+
+void saveCalibration() {
+  preferences.begin("calib", false);
+
+  preferences.putFloat("tOff", calibration.tempOffset);
+  preferences.putFloat("hOff", calibration.humOffset);
+  preferences.putFloat("lOff", calibration.lightOffset);
+  preferences.putFloat("sOff", calibration.soundOffset);
+
+  preferences.end();
+
+  Serial.println("💾 Calibração salva");
+}
+
+void resetCalibration() {
+  calibration = CalibrationData();
+  saveCalibration();
+}
+// ==================== Load System ====================
+
+void loadSystem() {
+  preferences.begin("system", true);
+  systemConfig.machineName = preferences.getString("name", "PrintSense 3D");
+  systemConfig.interval    = preferences.getInt("interval", 2);
+  systemConfig.logs        = preferences.getBool("logs", true);
+  systemConfig.alertLimit  = preferences.getInt("alertLimit", 5);
+  preferences.end();
+}
+
+void saveSystem() {
+  preferences.begin("system", false);
+  preferences.putString("name",       systemConfig.machineName);
+  preferences.putInt("interval",      systemConfig.interval);
+  preferences.putBool("logs",         systemConfig.logs);
+  preferences.putInt("alertLimit",    systemConfig.alertLimit);
+  preferences.end();
+}
+
+// ==================== CONFIG ====================
+
+void loadConfig() {
+  preferences.begin("config", true);
+
+  hasCustomConfig = preferences.getBool("hasCfg", false);
+
+  if (hasCustomConfig) {
+  customConfig.tempMin = preferences.getFloat("tMin", 18);
+  customConfig.tempMax = preferences.getFloat("tMax", 28);
+  customConfig.humMin = preferences.getFloat("hMin", 40);
+  customConfig.humMax = preferences.getFloat("hMax", 60);
+  customConfig.lightMax = preferences.getInt("lMax", 3000);
+  customConfig.soundMaxDB = preferences.getInt("sMax", 70);
+
+  // 🔥 ATIVA CUSTOM AUTOMATICAMENTE
+  currentMaterial = "CUSTOM";
+  currentMaterialIndex = 4;
+  }
+
+  preferences.end();
+}
+
+void saveConfig() {
+  preferences.begin("config", false);
+
+  preferences.putBool("hasCfg", true);
+
+  preferences.putFloat("tMin", customConfig.tempMin);
+  preferences.putFloat("tMax", customConfig.tempMax);
+  preferences.putFloat("hMin", customConfig.humMin);
+  preferences.putFloat("hMax", customConfig.humMax);
+  preferences.putInt("lMax", customConfig.lightMax);
+  preferences.putInt("sMax", customConfig.soundMaxDB);
+
+  preferences.end();
+
+  hasCustomConfig = true;
+}
+
+void resetConfig() {
+  preferences.begin("config", false);
+  preferences.clear();
+  preferences.end();
+
+  hasCustomConfig = false;
+}
+
+
 // ═══════════════════════════════════════════════════════════════
 //                           SETUP
 // ═══════════════════════════════════════════════════════════════
@@ -745,7 +1180,7 @@ void setup() {
   Serial.println("╔═══════════════════════════════════════════════════════╗");
   Serial.println("║                                                       ║");
   Serial.println("║         PRINTSENSE v4.0 FreeRTOS DUAL-CORE            ║");
-  Serial.println("║      Sistema de Monitoramento para Impressão 3D      ║");
+  Serial.println("║      Sistema de Monitoramento para Impressão 3D       ║");
   Serial.println("║                                                       ║");
   Serial.println("╚═══════════════════════════════════════════════════════╝");
   Serial.println();
@@ -845,11 +1280,26 @@ void setup() {
     lcd.setCursor(0, 1);
     lcd.print("SD: OK");
     Serial.println("✅ Diretórios criados (/web, /logs)\n");
+    delay(2000);
+    lcd.clear();
+    loadCalibration();
+    lcd.setCursor(0, 0);
+    lcd.print("Calibration: OK");
+    loadConfig();
+    lcd.setCursor(0, 1);
+    lcd.print("Materiais/Conf: OK");
+    Serial.println("✅ Diretórios criados (/web, /logs)\n");
+    loadSystem();
+    
   } else {
     lcd.setCursor(0, 1);
     lcd.print("SD: Erro (opcional)");
   }
+  loadSystem();
   delay(1500);
+
+// [5/7] CALIBRAÇÃO E CONFIGURAÇÕES
+
   
   // [5/7] WiFi
   Serial.println("[5/7] Configurando WiFi...");
